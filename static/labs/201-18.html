@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICL · RAG · CPT 방식 구분</title>
+<style>
+@font-face{font-family:"Pretendard";src:url("../fonts/PretendardVariable.woff2") format("woff2-variations"),url("../fonts/PretendardVariable.woff2") format("woff2");font-weight:45 920;font-style:normal;font-display:swap}
+:root{
+  --bg:#f6f7fb; --surface:#fff; --text:#1c2033; --muted:#646a82; --border:#dfe2ee;
+  --accent:#4f46e5; --accent-text:#fff; --accent-soft:#eceafd;
+  --ok:#0d7c55; --ok-soft:#e1f6ed; --bad:#c62f3d; --bad-soft:#fde8ea; --warn:#9a6700; --warn-soft:#fff3d1;
+  --code-bg:#141827; --code-text:#e6e9f5; --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1220; --surface:#181c30; --text:#e8eaf6; --muted:#9aa1bd; --border:#2b3150;
+    --accent:#8b86ff; --accent-text:#10122a; --accent-soft:#25274a;
+    --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016;
+    --code-bg:#0a0d19;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1220; --surface:#181c30; --text:#e8eaf6; --muted:#9aa1bd; --border:#2b3150;
+  --accent:#8b86ff; --accent-text:#10122a; --accent-soft:#25274a;
+  --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016;
+  --code-bg:#0a0d19;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 "Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header.top h1{font-size:1.05rem;margin:0;flex:1 1 auto}
+header.top h1 small{color:var(--muted);font-weight:400;margin-left:6px}
+nav.toc{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:.85rem;padding:4px 10px;border-radius:99px;border:1px solid var(--border)}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent)}
+main{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:0 0 22px;scroll-margin-top:110px}
+section.card h2{margin:0 0 4px;font-size:1.25rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:99px;margin-bottom:6px}
+.lead{color:var(--muted);margin:0 0 14px}
+.terms{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.terms span{font-size:.8rem;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:7px 14px;border-radius:9px;transition:transform .12s,background .15s,border-color .15s}
+button:hover{border-color:var(--accent)}
+button:active{transform:scale(.97)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+button.sm{padding:3px 10px;font-size:.85rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.box{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)}
+.box h3{margin:0 0 6px;font-size:.95rem}
+.good{border-color:var(--ok);background:var(--ok-soft)}
+.badbox{border-color:var(--bad);background:var(--bad-soft)}
+pre,code,textarea.code{font-family:"Cascadia Code","D2Coding",Consolas,monospace}
+pre.code{background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:10px;overflow:auto;margin:0;font-size:.85rem;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+textarea.code{width:100%;min-height:130px;background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:.85rem;resize:vertical}
+textarea.plain,input[type=text],select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
+iframe.preview{width:100%;height:230px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.hint{font-size:.86rem;color:var(--muted)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.92rem;margin-top:12px}
+.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.bar{height:14px;border-radius:99px;background:var(--border);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:.78rem;font-weight:700}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.check{display:flex;gap:8px;align-items:flex-start;padding:4px 0}
+.check input{margin-top:6px;width:18px;height:18px}
+.term-win{background:var(--code-bg);color:var(--code-text);border-radius:10px;padding:12px;font-family:Consolas,monospace;font-size:.85rem;height:210px;overflow:auto}
+.term-win .p{color:#7ee0a8}.term-win .e{color:#ff8b95}.term-win .d{color:#8f97b8}
+.term-in{display:flex;gap:6px;margin-top:8px}
+.tree{font-family:Consolas,monospace;font-size:.88rem;line-height:1.9}
+.tree .f{cursor:pointer;padding:1px 6px;border-radius:6px}
+.tree .f:hover,.tree .f.sel{background:var(--accent-soft);color:var(--accent)}
+.commit{display:flex;align-items:center;gap:10px;padding:6px 10px;border:1px solid var(--border);border-radius:9px;margin:5px 0;background:var(--bg)}
+.commit.head{border-color:var(--accent);background:var(--accent-soft)}
+.commit code{color:var(--muted);font-size:.8rem}
+.flow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:10px 0}
+.node{flex:1 1 150px;text-align:center;border:2px solid var(--border);border-radius:12px;padding:12px;transition:.25s;background:var(--bg)}
+.node.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.arrow{color:var(--muted);font-size:1.4rem}
+.flip{perspective:700px;height:112px;cursor:pointer}
+.flip>div{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on>div{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:.9rem}
+.flip .front{background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:1.05rem}
+.flip .back{background:var(--surface);transform:rotateY(180deg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.opt{display:block;width:100%;text-align:left;margin:5px 0}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+html{scroll-behavior:auto}
+body.lab{background:var(--surface)}
+body.lab main{max-width:none;margin:0;padding:0}
+body.lab section.card{border:0;border-radius:0;background:transparent;padding:4px 2px 12px;margin:0}
+body.lab section.card>.tag,body.lab section.card>h2,body.lab section.card>.terms{display:none}
+h3.st{font-size:1rem;margin:18px 0 6px}
+.tbl{overflow-x:auto}
+.tbl table{border-collapse:collapse;width:100%;min-width:480px;font-size:.9rem}
+.tbl th,.tbl td{border:1px solid var(--border);padding:6px 10px;text-align:left;vertical-align:top}
+.sc{border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--bg)}
+.sc p{margin:0 0 8px}
+button.right{background:var(--ok-soft);border-color:var(--ok)}
+button.wrong{background:var(--bad-soft);border-color:var(--bad)}
+button:disabled{cursor:default;opacity:.85}
+.fb{margin-top:6px}.okfb{color:var(--ok)}.badfb{color:var(--bad)}
+#sim h4{margin:12px 0 4px;font-size:.95rem}
+#sim ul{margin:0;padding-left:1.2em}.okli{color:var(--ok)}
+</style>
+</head>
+<body class="lab">
+<main>
+<section class="card" id="s18">
+  <span class="tag">AI 개념</span>
+  <h2>18. ICL · RAG · CPT 방식 구분</h2>
+  <p class="lead">새로운 지식을 AI에게 알려 주는 세 가지 방법을 <b>입력 자료</b>와 <b>모델 가중치 변화 여부</b>로 구분해 봅니다.</p>
+  <div class="terms"><span>ICL</span><span>RAG</span><span>CPT</span></div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>방식</th><th>하는 일</th><th>모델 가중치</th><th>바로 쓸 수 있나</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">ICL (문맥 내 학습)</th><td>예시나 자료를 질문과 함께 입력에 넣는다</td><td>변하지 않음</td><td>바로 가능</td></tr>
+      <tr><th scope="row">RAG (검색 증강 생성)</th><td>저장된 문서에서 관련 내용을 찾아 입력에 넣는다</td><td>변하지 않음</td><td>검색 환경을 갖추면 가능</td></tr>
+      <tr><th scope="row">CPT (지속 사전 학습)</th><td>대규모 자료로 모델을 추가 학습한다</td><td>변함</td><td>별도 학습 후 적용</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="st">① 시나리오 분류 <span id="score" class="hint" role="status" aria-live="polite"></span></h3>
+  <div id="quiz"></div>
+
+  <h3 class="st">② RAG 검색 시뮬레이션 <span class="pill warn">시뮬레이션</span></h3>
+  <p class="hint">고정된 예시 자료 4건과 단순 키워드 일치로 흉내 냅니다. 실제 검색 DB에 연결하거나 모델을 학습하지 않습니다.</p>
+  <label for="q">질문 고르기</label>
+  <select id="q"></select>
+  <div class="row" style="margin-top:8px"><button class="primary" id="run">관련 자료 찾기</button></div>
+  <div id="sim" aria-live="polite"></div>
+
+  <div id="result" class="note" hidden role="status" aria-live="polite"></div>
+  <div class="note warn">제품 매뉴얼 30페이지 같은 예시는 모델의 입력 한도와 문서 품질에 따라 달라집니다. 이 화면의 점수는 학습용 피드백이며 공식 평가가 아닙니다.</div>
+</section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+(function(){
+  var LAB_ID = "201-18", sent = false;
+  function setTheme(v){
+    document.documentElement.setAttribute('data-theme', v);
+    try{ window.dispatchEvent(new Event('themechange')); }catch(e){}
+  }
+  window.toast = function(msg){ try{ parent.postMessage({ type: 'toast', id: LAB_ID, message: String(msg) }, '*'); }catch(e){} };
+  var m = /theme=(light|dark)/.exec(location.hash); if(m) document.documentElement.setAttribute('data-theme', m[1]);
+  window.addEventListener('message', function(e){ if(e.data && e.data.type === 'theme') setTheme(e.data.value); });
+  function report(){ try{ parent.postMessage({ type: 'lab-height', id: LAB_ID, height: Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
+  // 클릭 횟수가 아니라 실습의 핵심 단계를 마쳤을 때만 완료 신호를 보낸다
+  window.labComplete = function(){ if(sent) return; sent = true; try{ parent.postMessage({ type: 'lab-engaged', id: LAB_ID }, '*'); }catch(e){} };
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener('load', report);
+  window.addEventListener('error', function(ev){ try{ parent.postMessage({ type: 'lab-error', id: LAB_ID, message: String(ev.message) }, '*'); }catch(e){} });
+  // 클립보드 권한이 없는 sandbox에서도 복사가 되도록 대체 경로를 둔다
+  window.copyText = function(text, done){
+    function fallback(){
+      var t = document.createElement('textarea'); t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      var ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(t); done(ok);
+    }
+    try{ if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){ done(true); }, fallback); return; } }catch(e){}
+    fallback();
+  };
+})();
+
+(function(){
+  var SCEN = [
+    ['질문 앞에 원하는 답변 형식의 예시 3개를 붙여서 보냈다.', 'ICL', '실행할 때 입력에 예시를 넣는 방식입니다. 모델은 바뀌지 않습니다.'],
+    ['사내 규정집을 문서 저장소에 모아 두고, 질문과 관련된 조항만 찾아 질문과 함께 모델에 전달한다.', 'RAG', '관련 자료를 찾아 입력에 제공하는 방식입니다. 저장소만 갱신하면 새 내용이 반영됩니다.'],
+    ['자사의 전문 논문과 특허 수십만 건으로 모델을 추가 학습시켜 모델 가중치를 바꾼다.', 'CPT', '추가 학습으로 모델 내부 표현이 바뀌는 방식입니다. 별도 학습 작업이 필요합니다.'],
+    ['처음 보는 제품 매뉴얼 전체를 대화창에 붙여 넣고 사용법을 물었다. (모델의 입력 한도 안에서)', 'ICL', '자료를 입력에 직접 넣는 방식입니다. 입력 한도를 넘으면 쓸 수 없고, 한도는 모델마다 다릅니다.'],
+    ['법령이 개정될 때마다 문서 저장소의 파일만 교체하고 모델은 그대로 둔다.', 'RAG', '지식은 저장소에 있고 모델 가중치는 그대로입니다. 그래서 갱신이 쉽습니다.'],
+    ['도메인 전용 모델을 만들기 위해 별도 학습을 돌린 뒤 새 모델을 적용한다.', 'CPT', '학습 후 적용해야 하므로 바로 쓸 수 없고, 적용 이후 모델 가중치가 달라집니다.']
+  ];
+  var answered = {}, correct = 0, simRan = false, wrap = $('#quiz');
+  SCEN.forEach(function(s, idx){
+    var card = document.createElement('div'); card.className = 'sc';
+    var p = document.createElement('p'); p.textContent = (idx + 1) + '. ' + s[0]; card.appendChild(p);
+    var row = document.createElement('div'); row.className = 'row';
+    var fb = document.createElement('div'); fb.className = 'hint'; fb.setAttribute('role', 'status'); fb.setAttribute('aria-live', 'polite');
+    ['ICL', 'RAG', 'CPT'].forEach(function(k){
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = k;
+      b.addEventListener('click', function(){
+        if(answered[idx]) return;
+        answered[idx] = k; var ok = k === s[1]; if(ok) correct++;
+        fb.textContent = (ok ? '✔ 맞아요. ' : '✘ 정답은 ' + s[1] + ' 입니다. ') + s[2];
+        fb.className = ok ? 'fb okfb' : 'fb badfb';
+        $$('button', row).forEach(function(x){ x.disabled = true; });
+        b.className = ok ? 'right' : 'wrong';
+        update();
+      });
+      row.appendChild(b);
+    });
+    card.appendChild(row); card.appendChild(fb); wrap.appendChild(card);
+  });
+  function $$(sel, root){ return [].slice.call((root || document).querySelectorAll(sel)); }
+
+  var DOCS = [
+    ['환불 규정', '구매 후 7일 이내 미사용 제품은 환불할 수 있다.', ['환불', '구매', '7일']],
+    ['배송 안내', '주문 후 평균 2~3일 안에 배송된다. 도서산간은 하루 더 걸린다.', ['배송', '주문', '도서산간']],
+    ['보증 기간', '제품 보증 기간은 구매일로부터 1년이다.', ['보증', '기간', '구매']],
+    ['개인정보 처리', '개인정보는 목적 달성 후 지체 없이 파기한다.', ['개인정보', '파기']]
+  ];
+  var QS = [
+    ['환불은 구매 후 며칠까지 가능한가요?', ['환불', '구매', '7일']],
+    ['도서산간 지역은 배송이 얼마나 걸리나요?', ['배송', '도서산간']],
+    ['보증 기간은 얼마인가요?', ['보증', '기간']]
+  ];
+  var qsel = $('#q');
+  QS.forEach(function(q, i){ var o = document.createElement('option'); o.value = i; o.textContent = q[0]; qsel.appendChild(o); });
+  function mk(tag, text, cls){ var e = document.createElement(tag); e.textContent = text; if(cls) e.className = cls; return e; }
+
+  $('#run').addEventListener('click', function(){
+    var q = QS[+qsel.value], sim = $('#sim'); sim.textContent = '';
+    var scored = DOCS.map(function(d){
+      var hit = q[1].filter(function(k){ return d[2].indexOf(k) >= 0; });
+      return { d: d, score: hit.length, hit: hit };
+    }).sort(function(a, b){ return b.score - a.score; });
+    var picked = scored.filter(function(x){ return x.score > 0; }).slice(0, 2);
+    sim.appendChild(mk('h4', '1) 저장된 문서와 키워드 일치 수'));
+    var ul = document.createElement('ul');
+    scored.forEach(function(x){
+      var on = picked.indexOf(x) >= 0;
+      ul.appendChild(mk('li', x.d[0] + ' — 일치 ' + x.score + '개' + (x.hit.length ? ' (' + x.hit.join(', ') + ')' : '') + (on ? ' → 선택됨' : ''), on ? 'okli' : ''));
+    });
+    sim.appendChild(ul);
+    sim.appendChild(mk('h4', '2) 모델에 전달되는 입력'));
+    var prompt = '다음 자료만 근거로 답해 주세요.\n' + picked.map(function(x){ return '- [' + x.d[0] + '] ' + x.d[1]; }).join('\n') + '\n\n질문: ' + q[0];
+    sim.appendChild(mk('pre', prompt, 'code'));
+    sim.appendChild(mk('p', '3) 모델 가중치: 변화 없음 (입력만 달라졌습니다)', 'hint'));
+    simRan = true; update();
+  });
+
+  function update(){
+    var n = Object.keys(answered).length;
+    $('#score').textContent = '(' + n + '/' + SCEN.length + ' 답변 · 맞힌 수 ' + correct + ')';
+    if(n === SCEN.length && simRan){
+      var r = $('#result'); r.hidden = false; r.className = 'note';
+      r.textContent = '분류와 시뮬레이션을 모두 확인했습니다. 핵심 구분: ICL과 RAG는 입력에 자료를 넣어 모델 가중치를 바꾸지 않고, CPT는 추가 학습으로 가중치가 바뀝니다.';
+      labComplete();
+    } else if(n === SCEN.length){
+      var r2 = $('#result'); r2.hidden = false; r2.className = 'note warn'; r2.textContent = '분류를 마쳤습니다. ②의 RAG 시뮬레이션도 한 번 실행해 보세요.';
+    }
+  }
+  update();
+})();
+</script>
+</body>
+</html>

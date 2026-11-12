@@ -1,0 +1,13 @@
+[project]
+name = "id-vibeworking"
+version = "0.0.10"
+
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "dej-sdk>=1.0.37",
+  "fastapi==0.135.2",
+  "uvicorn==0.38.0",
+]
+
+[tool.uv]
+index-url = "https://nexus.hedej.lge.com/repository/pypi-group/simple"

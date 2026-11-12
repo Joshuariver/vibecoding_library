@@ -1,0 +1,396 @@
+﻿{
+    "capturedOn":  "2026-10-30",
+    "purpose":  "Read-only app1 and reference baseline for app4 implementation",
+    "files":  [
+                  {
+                      "path":  "app1/.dockerignore",
+                      "sha256":  "0D889C0EA677004A343308646F452AC0B47D4A0639C44F1EDC249B9BA8F7ED19",
+                      "bytes":  1616
+                  },
+                  {
+                      "path":  "app1/.gitignore",
+                      "sha256":  "D607B7D9FB2E27756E10EFB795042B618185513CD4B25B56A62D5072CAB84C1D",
+                      "bytes":  17
+                  },
+                  {
+                      "path":  "app1/.gitlab-ci.yml",
+                      "sha256":  "FF15B8D93BDD93B3A51D334E9F1203EA8D84EE0D8AB643F0B624315C57EC89D5",
+                      "bytes":  3429
+                  },
+                  {
+                      "path":  "app1/Dockerfile",
+                      "sha256":  "F9A41F00D90E5A996E4C3C5E4E77155251E3D2BD64998755D2DAECD50467879E",
+                      "bytes":  592
+                  },
+                  {
+                      "path":  "app1/main.py",
+                      "sha256":  "12081354E474BE81F7A37D9BEF607789C1BDDD6C7F6ECC580DDB586E5C1B4FE1",
+                      "bytes":  2905
+                  },
+                  {
+                      "path":  "app1/pyproject.toml",
+                      "sha256":  "9CD58128C094725146604964D4ECB97117E2D060A09BD832FE77F637C4345E17",
+                      "bytes":  251
+                  },
+                  {
+                      "path":  "app1/README.md",
+                      "sha256":  "C7700954DE1DF7092DB8E377EBE1F743BA0DA0B0D67AA842D7C5CD4FFEC06CF4",
+                      "bytes":  6761
+                  },
+                  {
+                      "path":  "app1/requirements-dev.txt",
+                      "sha256":  "8B9BEF6630653D64B6410D0242F8E7177E5F7A8513918B6F15A98C3E7EFC5483",
+                      "bytes":  48
+                  },
+                  {
+                      "path":  "app1/requirements.txt",
+                      "sha256":  "D157318AC94324867F87ABCA8D2708A7BE485081F8B78AC29AF473ED6EA04A67",
+                      "bytes":  33
+                  },
+                  {
+                      "path":  "app1/start.sh",
+                      "sha256":  "9B0A3BF4D69AD6471B480371E78408E988AE2F4B2872D9B789E187ECDFD83505",
+                      "bytes":  59
+                  },
+                  {
+                      "path":  "app1/uv.lock",
+                      "sha256":  "F43D2206F835955F1EEA76A01F5DFA3F3224DF613166CD529CF5B6CF8D519D40",
+                      "bytes":  126302
+                  },
+                  {
+                      "path":  "app1/static/index.html",
+                      "sha256":  "36AB3ADB6B229D7AB1EE88E1A139BE3E8BCCC8B7B9478AE5E0A0D514AF8BCFC3",
+                      "bytes":  1666
+                  },
+                  {
+                      "path":  "app1/static/README.txt",
+                      "sha256":  "43C963E486F20939890372812D95AFD6D5E1EB01B9F2FCE93EAB97E89FF66810",
+                      "bytes":  590
+                  },
+                  {
+                      "path":  "app1/static/css/app.css",
+                      "sha256":  "69E68AE84ADFDE58FED656787EC72DBBA12D3A24BB64FA1E047682C1A0D2DD3E",
+                      "bytes":  19633
+                  },
+                  {
+                      "path":  "app1/static/data/glossary.js",
+                      "sha256":  "BE2501BF90DC21817C7980E9893D8625DA3FF6AF1C1E5539E1E32D715D8D6CF8",
+                      "bytes":  48013
+                  },
+                  {
+                      "path":  "app1/static/data/labs.js",
+                      "sha256":  "1ABECC989D32C9A041D8154C12A3709ABF23AD0CC9DC08466F4273B42DE518F4",
+                      "bytes":  17960
+                  },
+                  {
+                      "path":  "app1/static/data/level-101.js",
+                      "sha256":  "D134D43DD364E18321DE57B359F81484143B0B3BE8346330394ADE80A1ABA16E",
+                      "bytes":  15903
+                  },
+                  {
+                      "path":  "app1/static/data/level-102.js",
+                      "sha256":  "D8DDCD6A4C53089D8E32B66490F4BFCF51BEAFD4C1A281127EA02132515FA876",
+                      "bytes":  59603
+                  },
+                  {
+                      "path":  "app1/static/data/level-103d.js",
+                      "sha256":  "1CDAEFA5FF9C5624E2E9743CBFE4DC9EF4512C4CD74B361BA87E82D8B86A2ABE",
+                      "bytes":  46441
+                  },
+                  {
+                      "path":  "app1/static/data/level-103s.js",
+                      "sha256":  "EE8B07B51788D36D86E40D981E7F2B61D733A97AA1B641FF907E0A41A29417BC",
+                      "bytes":  41487
+                  },
+                  {
+                      "path":  "app1/static/data/meta.js",
+                      "sha256":  "62F6DDE0AF58E6B28DF83876D5EFEC7CE2C395C86B0AE3F9873A4CC7A01798FB",
+                      "bytes":  1400
+                  },
+                  {
+                      "path":  "app1/static/data/prompts.js",
+                      "sha256":  "53F707C6E1968FB491094816D5360DC5B00357EEC745CC1D9E12E87CF50671F5",
+                      "bytes":  54234
+                  },
+                  {
+                      "path":  "app1/static/data/search.js",
+                      "sha256":  "A15C4F91423CDAAAD01B2A455C7716624A18BBD27B7FCF37C5537A07EF023CBF",
+                      "bytes":  199156
+                  },
+                  {
+                      "path":  "app1/static/fonts/PretendardVariable.woff2",
+                      "sha256":  "9599F12FD42FC0BCE1CD50B47A0C022E108D7AA64DD0D1BB0ED44F3282D900B4",
+                      "bytes":  2057688
+                  },
+                  {
+                      "path":  "app1/static/js/app.js",
+                      "sha256":  "5DE8D35A64E9D5590AFC019D9268A17E7A37951B2AAC3F70B87B88E09EBCD9C6",
+                      "bytes":  29969
+                  },
+                  {
+                      "path":  "app1/static/js/store.js",
+                      "sha256":  "CB6A66F86C5722C2E1E740BD097D09A59C154907A4B0F582DF9307FF993F9408",
+                      "bytes":  2682
+                  },
+                  {
+                      "path":  "app1/static/js/tools.js",
+                      "sha256":  "37F5D456550C49616D8C25993E0D1291C9C192D6169DCB17BD512FC45ABBC6D4",
+                      "bytes":  22595
+                  },
+                  {
+                      "path":  "app1/static/js/ui.js",
+                      "sha256":  "7501FF31C136D3851849942B2D05FC6C5A12C7A448FB56238375FA13D3E846F0",
+                      "bytes":  1551
+                  },
+                  {
+                      "path":  "app1/static/labs/101-01.html",
+                      "sha256":  "657BDE8330CCAF557141CC99B4CE806956FC56E3BD9A44A6C34BCAE3E835EB80",
+                      "bytes":  12773
+                  },
+                  {
+                      "path":  "app1/static/labs/101-02.html",
+                      "sha256":  "03EAF8112F171CB58C1C68CF5F796DC1815EFCCF1409227E7911A56528AC7C8D",
+                      "bytes":  12607
+                  },
+                  {
+                      "path":  "app1/static/labs/101-03.html",
+                      "sha256":  "4A33D9108B963A1075F0CD482703085E03CD10BCE7369FA95DAB18A914D46E08",
+                      "bytes":  11940
+                  },
+                  {
+                      "path":  "app1/static/labs/101-04.html",
+                      "sha256":  "6A588370498C680ADF61902D6D928FEFA737ABF96C34DE6C7386EB0602C61B68",
+                      "bytes":  13269
+                  },
+                  {
+                      "path":  "app1/static/labs/101-05.html",
+                      "sha256":  "375CFE7D12E71C56771A1269DEB59DE8BBF205457939D27F0F410E4BDA5B948F",
+                      "bytes":  12060
+                  },
+                  {
+                      "path":  "app1/static/labs/101-06.html",
+                      "sha256":  "3839306E2B9E722793D62873775DFAB109B37CE773BB00922E7C73C0417C791D",
+                      "bytes":  11918
+                  },
+                  {
+                      "path":  "app1/static/labs/101-07.html",
+                      "sha256":  "B74FA583FFBE23A26B4A7A9D3E1C8AFCAB8847AC3CE4A2D21CECB8AE4E0C34E4",
+                      "bytes":  12372
+                  },
+                  {
+                      "path":  "app1/static/labs/101-08.html",
+                      "sha256":  "2F2DA3A86117520E271E42BF7E441FD0F3D585B8EB3B1B3C7218753AC110EF45",
+                      "bytes":  12565
+                  },
+                  {
+                      "path":  "app1/static/labs/101-09.html",
+                      "sha256":  "0723214B97915DB84204C550967802B97B697AE58576405A8337EBEDFC79ACAC",
+                      "bytes":  11977
+                  },
+                  {
+                      "path":  "app1/static/labs/101-10.html",
+                      "sha256":  "7B3AF2185222477190BFE82DF17F352A692D927F302B1E10C6A4933A8D7B67AA",
+                      "bytes":  12199
+                  },
+                  {
+                      "path":  "app1/static/labs/102-01.html",
+                      "sha256":  "499B45CF14A47847632DCE11EF48FC592E633014164E76D6699393BE21343C48",
+                      "bytes":  17849
+                  },
+                  {
+                      "path":  "app1/static/labs/102-02.html",
+                      "sha256":  "5C9EFA2DE6D1573160960F15BA6F31632D5CA6F22E78FD87DF3A39019D91127F",
+                      "bytes":  17967
+                  },
+                  {
+                      "path":  "app1/static/labs/102-03.html",
+                      "sha256":  "8DE9E9FD32E0663FC5CE66F573A40B642E0D8D50B77E1D9FE887E08CFFEE8138",
+                      "bytes":  17733
+                  },
+                  {
+                      "path":  "app1/static/labs/102-04.html",
+                      "sha256":  "A6A37DD30F350AE6050FF3EC28AE5E7C02BAD8922026A99FF3E2F6D04710C409",
+                      "bytes":  16865
+                  },
+                  {
+                      "path":  "app1/static/labs/102-05.html",
+                      "sha256":  "ECB5D3EE32C234C81648BC5DE7D68C2F997FB9348E3B87978751F93E2F830F85",
+                      "bytes":  17959
+                  },
+                  {
+                      "path":  "app1/static/labs/102-06.html",
+                      "sha256":  "E1FE71E4E4738CD4CB8452A52FEA13B2E3212ADCB6C631987765B8287E390F9D",
+                      "bytes":  17104
+                  },
+                  {
+                      "path":  "app1/static/labs/102-07.html",
+                      "sha256":  "06E4E568E4CEAD119D7FCC18F74C662DE0733446BBEBA3CFA60A07A52118F28B",
+                      "bytes":  16565
+                  },
+                  {
+                      "path":  "app1/static/labs/102-08.html",
+                      "sha256":  "4F9894AF5FDA82134F87C40430A0706693D278582A33E6F194AEC717EDD67184",
+                      "bytes":  17449
+                  },
+                  {
+                      "path":  "app1/static/labs/102-09.html",
+                      "sha256":  "6B28F65D28CAD005822380B11FADA51995A9134920C228DD02A451CB84E84A72",
+                      "bytes":  17641
+                  },
+                  {
+                      "path":  "app1/static/labs/102-10.html",
+                      "sha256":  "5C27465FB2B72425C9C2957889A8DC04C918CFDDE77A9CCBB9622763A850ECCB",
+                      "bytes":  16764
+                  },
+                  {
+                      "path":  "app1/static/labs/102-11.html",
+                      "sha256":  "5FE4F3052B12CA29199DB3C27B8D0FD067EB932A140462D5A5C27DBBE719FDF2",
+                      "bytes":  19120
+                  },
+                  {
+                      "path":  "app1/static/labs/102-12.html",
+                      "sha256":  "C57A1A998B6F2C1848A07E1F17F7CBC99F8F84FB69A9BABA6518CF0CDBAC64E4",
+                      "bytes":  17990
+                  },
+                  {
+                      "path":  "app1/static/labs/102-13.html",
+                      "sha256":  "9C7186EBB19B69E6061CD345CCE04BA9664A6869E63B520E0401F9FE47A060A3",
+                      "bytes":  18540
+                  },
+                  {
+                      "path":  "app1/static/labs/102-14.html",
+                      "sha256":  "9DFB1E7446AFFE8D080136AB1D75AA4D6DCC9D107DA79EA1F521C83D4EAF27D4",
+                      "bytes":  19670
+                  },
+                  {
+                      "path":  "app1/static/labs/102-15.html",
+                      "sha256":  "464C5BA1320E4897A3B6D61DA81B37F8F204EB6E17F139FF6CA94D8415775241",
+                      "bytes":  19976
+                  },
+                  {
+                      "path":  "app1/static/labs/102-16.html",
+                      "sha256":  "37570B1ED40BBB01166F3FFA83BF28B5CF830FBA45094E79CCC8F4C571E45FFA",
+                      "bytes":  18746
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-01.html",
+                      "sha256":  "86E285DD601A5A31104FE6CD6F9F71FD63BE52DCF5EF48B71493D3501615797B",
+                      "bytes":  14209
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-02.html",
+                      "sha256":  "260A737DBCE1E8A128DCC6894A75B9779F8902C5248BA350426E851098DD25A2",
+                      "bytes":  14346
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-03.html",
+                      "sha256":  "8915C1F30F8B03EFF963193690E5D78A4B629C9E79AB9EFEEEE04020329562B8",
+                      "bytes":  14998
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-04.html",
+                      "sha256":  "554526F091B6453F253414F14E8391CFF8AD52580A022BA34B9B295BD563A417",
+                      "bytes":  14654
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-05.html",
+                      "sha256":  "AD1EBB8593308B9B12434752219B45418AEC0D60C7562FF96404DE62B9558680",
+                      "bytes":  15150
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-06.html",
+                      "sha256":  "7045CDE4BB53E61EE3D6BBDFAA41130593B0F64E72CC58581070C6DFD75E9585",
+                      "bytes":  14802
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-07.html",
+                      "sha256":  "F163C7D0DB30779F52BC2E80AE87D348B0B27DEE9BC00158414809BECA7BDF4B",
+                      "bytes":  15455
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-08.html",
+                      "sha256":  "9527FD23E0E1C1EFDCB94B411D9A69ABBB7C6301AF1C9D080F77153C16C8FB25",
+                      "bytes":  14508
+                  },
+                  {
+                      "path":  "app1/static/labs/103d-09.html",
+                      "sha256":  "E2A1772B300FC8F9B43B6F6B16B4DF1A6DE40E00FD0E3FEE849A7F9A3007464C",
+                      "bytes":  13630
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-01.html",
+                      "sha256":  "F116318827C5C82A13B578FD8DDC875BA6B56ECC8E3D61317E65862FF2EA7776",
+                      "bytes":  13534
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-02.html",
+                      "sha256":  "6A443EC9B6339110C3693E8C78F248DDB5E42C5019D540E912344E0474653353",
+                      "bytes":  13012
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-03.html",
+                      "sha256":  "5D4A51069EA872561950C42B0B649544F40D95168821F61C7B888E3D57324B87",
+                      "bytes":  14790
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-04.html",
+                      "sha256":  "870146224DC99F0E521253DD8E3F4C3B48ED9AF5CA342504C23B3D868024A4C1",
+                      "bytes":  14513
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-05.html",
+                      "sha256":  "E0FBC97B7F9F52E8E8D4633C612F8896DD85F52B284FDAB2948BC6897DBA1659",
+                      "bytes":  13263
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-06.html",
+                      "sha256":  "601F8905EED15D9F340284FC8D1F86C10304B9F842138C3D62359589CA4BA5CC",
+                      "bytes":  14923
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-07.html",
+                      "sha256":  "F4458EC0BBED6377AB8AAA3CF08C34831A2906C20FDE3367F327D8F0A98C26B4",
+                      "bytes":  14578
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-08.html",
+                      "sha256":  "D2A7CD4FDB1E6719C23E4E06E6AB791AFF6D01D817B1569B7C88B5A2ABC1DFE4",
+                      "bytes":  13805
+                  },
+                  {
+                      "path":  "app1/static/labs/103s-09.html",
+                      "sha256":  "35A4F29DD318C1A19326B98979D945A1C99120E3843A59B7E3DE4F01F3C7A9F2",
+                      "bytes":  14506
+                  },
+                  {
+                      "path":  "app1/tests/browser.cjs",
+                      "sha256":  "E3817D89412B5DF1FE15F444B14A121882D8FF63CC333A7F01AF2786A51B16FA",
+                      "bytes":  8348
+                  },
+                  {
+                      "path":  "app1/tests/test_app.py",
+                      "sha256":  "4973C4A3966F0394D0C0A7FAC42CAA94B56B43DB5FC210798B84EECE54AE1DD5",
+                      "bytes":  2746
+                  },
+                  {
+                      "path":  "ref_app/course_guide.html",
+                      "sha256":  "ED3D3E2C8E41145C2A1A66D94B489A4E77F853091926C8816DE8DAC64BCB2B47",
+                      "bytes":  65918
+                  },
+                  {
+                      "path":  "ref_mds/Codex_CLI_설치_사용_가이드.md",
+                      "sha256":  "65C8880DAC028463EA94E005900A8373751A78374A48069427D158BE233B336C",
+                      "bytes":  14488
+                  },
+                  {
+                      "path":  "design_v1.md",
+                      "sha256":  "F57CFAC62A3034CDD81A56563A1B3B11A22BD658B70C436C3FCA73FEEB0D6B5D",
+                      "bytes":  23709
+                  },
+                  {
+                      "path":  "2_design_plan.md",
+                      "sha256":  "AE325D28BA75225036652A63408B76AE6C9120A2503E2E609EE56FCE8D4F73B6",
+                      "bytes":  23179
+                  }
+              ]
+}

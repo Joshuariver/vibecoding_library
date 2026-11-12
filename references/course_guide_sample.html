@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[MS ID 사업부] 실무 AX 역량강화 Vibe Coding 교육 안내 & 환경 구축 가이드</title>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --primary-dark: #0f172a;
+      --twin-crimson: #a50034;
+      --twin-crimson-light: #fff1f2;
+      --dev-blue: #0284c7;
+      --dev-blue-dark: #0369a1;
+      --dev-blue-light: #f0f9ff;
+      --accent-hover: #be123c;
+      --brand-blue: #2563eb;
+      --brand-blue-light: #eff6ff;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --card-bg: #ffffff;
+      --code-bg: #1e293b;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 75px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Pretendard Variable", Pretendard, "Malgun Gothic", sans-serif;
+      background-color: #f1f5f9;
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 상단 탑바 (전체 헤더) */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #ffffff;
+      border-bottom: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .top-header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      text-decoration: none;
+    }
+
+    .brand-badge {
+      background: var(--twin-crimson);
+      color: white;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .top-track-nav {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .top-nav-btn {
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+      color: var(--slate-600);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .top-nav-btn:hover {
+      background: var(--slate-100);
+      color: var(--slate-900);
+    }
+    .top-nav-btn.active.mkt-tab {
+      background: var(--twin-crimson);
+      color: #ffffff;
+      border-color: var(--twin-crimson);
+    }
+    .top-nav-btn.active.dev-tab {
+      background: var(--dev-blue-dark);
+      color: #ffffff;
+      border-color: var(--dev-blue-dark);
+    }
+
+    .top-nav-status {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--slate-600);
+    }
+
+    .top-progress-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mini-progress-track {
+      width: 100px;
+      height: 8px;
+      background: var(--slate-200);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .mini-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-blue), var(--success));
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* 레이아웃: 사이드바 + 메인 콘텐츠 */
+    .app-layout {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* 좌측 서브 메뉴 사이드바 */
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: #ffffff;
+      border-right: 1px solid var(--slate-200);
+      padding: 1.5rem 1rem;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar-section {
+      margin-bottom: 1.75rem;
+    }
+
+    .sidebar-heading {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--slate-400);
+      padding: 0 0.75rem 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--slate-100);
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sidebar-item:hover {
+      background: var(--slate-100);
+      color: var(--slate-900);
+    }
+
+    .sidebar-item.active {
+      background: var(--slate-900);
+      color: #ffffff;
+    }
+
+    .sidebar-item.track-mkt {
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item.track-mkt.active {
+      background: #fff1f2;
+      color: #be123c;
+      border-left-color: var(--twin-crimson);
+    }
+
+    .sidebar-item.track-dev {
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item.track-dev.active {
+      background: var(--dev-blue-light);
+      color: var(--dev-blue-dark);
+      border-left-color: var(--dev-blue);
+    }
+
+    .menu-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .menu-badge.mkt {
+      background: #ffe4e6;
+      color: #be123c;
+    }
+    .menu-badge.dev {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 0.75rem;
+      background: var(--slate-50);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--slate-200);
+      font-size: 0.82rem;
+      color: var(--slate-600);
+    }
+
+    /* 메인 콘텐츠 영역 */
+    .content-area {
+      flex: 1;
+      min-width: 0;
+      padding: 2rem 2.5rem 5rem 2.5rem;
+      background-color: #f8fafc;
+    }
+
+    /* 트랙 전환 탭 (본문 상단 퀵 스위처) */
+    .track-switcher {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      background: #ffffff;
+      padding: 0.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .track-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--slate-600);
+      transition: all 0.2s;
+    }
+
+    .track-btn:hover {
+      background: var(--slate-50);
+      color: var(--slate-900);
+    }
+
+    .track-btn.active.mkt-btn {
+      background: var(--twin-crimson);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(165, 0, 52, 0.25);
+    }
+
+    .track-btn.active.dev-btn {
+      background: var(--dev-blue-dark);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+    }
+
+    /* 과정안내 뷰 (해외영업 vs 개발조직) */
+    .course-view {
+      display: none;
+    }
+    .course-view.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 히어로 카드 공통 */
+    .hero-card {
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2.25rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card.mkt-hero {
+      background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+      border-top: 5px solid var(--twin-crimson);
+    }
+
+    .hero-card.dev-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%);
+      border-top: 5px solid var(--dev-blue);
+    }
+
+    .hero-dept {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .mkt-hero .hero-dept { color: #fb7185; }
+    .dev-hero .hero-dept { color: #38bdf8; }
+
+    .hero-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 0.65rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      font-weight: 400;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-learning-net {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      border-left: 4px solid #facc15;
+      font-size: 0.93rem;
+      color: #fef08a;
+      font-weight: 600;
+    }
+
+    /* 핵심 신청 요강 박스 */
+    .info-summary-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 1.35rem 1.75rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .info-summary-card.mkt-summary {
+      border: 2px solid #f43f5e;
+      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.08);
+    }
+    .info-summary-card.dev-summary {
+      border: 2px solid #0ea5e9;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.08);
+    }
+
+    .info-summary-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 0.65rem;
+    }
+    .mkt-summary .info-summary-header { color: #be123c; }
+    .dev-summary .info-summary-header { color: #0284c7; }
+
+    .info-summary-list {
+      list-style: none;
+      display: grid;
+      gap: 0.45rem;
+      font-size: 0.95rem;
+      color: var(--slate-800);
+    }
+
+    .info-summary-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    .info-summary-item::before {
+      content: "•";
+      font-weight: bold;
+    }
+    .mkt-summary .info-summary-item::before { color: #e11d48; }
+    .dev-summary .info-summary-item::before { color: #0284c7; }
+
+    /* 개요/목표/커리큘럼 카드 */
+    .overview-grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      padding: 1.65rem 1.85rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-heading-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.15rem;
+      border-bottom: 2px solid var(--slate-100);
+      padding-bottom: 0.65rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-num {
+      color: var(--brand-blue);
+      font-weight: 800;
+    }
+
+    .overview-text {
+      color: var(--slate-700);
+      font-size: 0.98rem;
+      line-height: 1.7;
+    }
+
+    /* 목표 리스트 */
+    .target-checklist {
+      list-style: none;
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .target-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      color: var(--slate-800);
+      font-size: 0.95rem;
+    }
+
+    .target-checklist li svg {
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .mkt-checklist li svg { color: #e11d48; }
+    .dev-checklist li svg { color: #0284c7; }
+
+    /* 커리큘럼 테이블 */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--slate-200);
+    }
+
+    .curriculum-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.93rem;
+    }
+
+    .curriculum-table th {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 0.85rem 1.15rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .curriculum-table td {
+      padding: 0.95rem 1.15rem;
+      border-bottom: 1px solid var(--slate-200);
+      color: var(--slate-800);
+    }
+
+    .curriculum-table tr:nth-child(even) td {
+      background-color: var(--slate-50);
+    }
+
+    .badge-step-mkt { font-weight: 700; color: #e11d48; }
+    .badge-step-dev { font-weight: 700; color: #0284c7; }
+
+    /* 공지 카드 */
+    .notice-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      padding: 1.35rem 1.65rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .notice-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .notice-list {
+      list-style: none;
+      display: grid;
+      gap: 0.45rem;
+      font-size: 0.92rem;
+      color: var(--slate-700);
+    }
+    .notice-list li {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .notice-list li::before {
+      content: "•";
+      color: var(--slate-400);
+    }
+
+    /* 디바이더 */
+    .divider-heading {
+      text-align: center;
+      margin: 4rem 0 2.5rem 0;
+      position: relative;
+    }
+
+    .divider-heading::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--slate-300);
+      z-index: 1;
+    }
+
+    .divider-pill {
+      position: relative;
+      z-index: 2;
+      background: var(--slate-900);
+      color: white;
+      padding: 0.5rem 1.75rem;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* 설치 안내 단계별 카드 */
+    .install-step-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      scroll-margin-top: 75px;
+    }
+
+    .step-header {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--slate-200);
+      padding: 1.35rem 1.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .step-badge-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .step-number {
+      background: var(--brand-blue);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 800;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+    }
+    .step-number.dev {
+      background: #be185d;
+    }
+
+    .step-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .target-tag {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      background: var(--slate-100);
+      color: var(--slate-600);
+    }
+
+    .target-tag.dev-only {
+      background: #fce7f3;
+      color: #9d174d;
+      border: 1px solid #fbcfe8;
+    }
+
+    .step-body {
+      padding: 1.85rem;
+    }
+
+    /* 콜아웃 */
+    .callout {
+      border-radius: var(--radius-md);
+      padding: 1.15rem 1.35rem;
+      margin: 1.25rem 0;
+      display: flex;
+      gap: 0.85rem;
+      font-size: 0.95rem;
+    }
+
+    .callout-warning {
+      background: var(--warning-light);
+      border-left: 4px solid var(--warning);
+      color: #92400e;
+    }
+
+    .callout-info {
+      background: var(--brand-blue-light);
+      border-left: 4px solid var(--brand-blue);
+      color: #1e40af;
+    }
+
+    .callout-success {
+      background: var(--success-light);
+      border-left: 4px solid var(--success);
+      color: #065f46;
+    }
+
+    /* 코드 블록 & 복사 버튼 */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1rem 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--code-bg);
+    }
+
+    .code-block-header {
+      background: #0f172a;
+      padding: 0.45rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-family: monospace;
+      border-bottom: 1px solid #334155;
+    }
+
+    .code-content {
+      padding: 1rem 1.25rem;
+      color: #f8fafc;
+      font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+
+    .copy-btn {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover { background: #475569; }
+    .copy-btn.copied { background: var(--success); color: white; }
+
+    /* 대화형 체크리스트 */
+    .interactive-checklist {
+      background: #f8fafc;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.75rem;
+    }
+
+    .checklist-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed var(--slate-200);
+      cursor: pointer;
+      user-select: none;
+    }
+    .checklist-item:last-child { border-bottom: none; }
+
+    .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--success);
+      cursor: pointer;
+    }
+
+    .checklist-label {
+      font-size: 0.92rem;
+      color: var(--slate-700);
+      transition: color 0.2s;
+    }
+
+    .checklist-item input:checked + .checklist-label {
+      color: var(--slate-400);
+      text-decoration: line-through;
+    }
+
+    /* 아코디언 */
+    details.trouble-accordion {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-sm);
+      margin: 0.6rem 0;
+      overflow: hidden;
+    }
+
+    details.trouble-accordion summary {
+      padding: 0.85rem 1.15rem;
+      font-weight: 600;
+      font-size: 0.94rem;
+      color: var(--slate-800);
+      cursor: pointer;
+      background: var(--slate-50);
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    details.trouble-accordion summary:hover { background: var(--slate-100); }
+
+    details.trouble-accordion .trouble-content {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--slate-200);
+      font-size: 0.92rem;
+      color: var(--slate-700);
+      background: #ffffff;
+    }
+
+    /* 토스트 팝업 */
+    .toast-popup {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--slate-900);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.9rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.25s ease;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .toast-popup.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 반응형 레이아웃 */
+    @media (max-width: 992px) {
+      .app-layout {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid var(--slate-200);
+        padding: 1rem;
+      }
+      .content-area {
+        padding: 1.5rem 1rem 3rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 최상단 헤더 -->
+  <header class="top-header">
+    <div class="top-header-inner">
+      <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+        <a href="#course-overview-section" class="brand-title">
+          <span class="brand-badge">MS ID AX</span>
+          <span>Vibe Coding 안내 앱</span>
+        </a>
+        <!-- 상단 빠른 트랙 전환 네비게이션 탭 -->
+        <nav class="top-track-nav">
+          <button id="topNavMkt" class="top-nav-btn active mkt-tab" onclick="switchTrack('mkt')">
+            🌐 해외영업 (10.19)
+          </button>
+          <button id="topNavDev" class="top-nav-btn dev-tab" onclick="switchTrack('dev')">
+            ⚙️ 비SW개발직군 (10.26)
+          </button>
+        </nav>
+      </div>
+      <div class="top-nav-status">
+        <div class="top-progress-indicator">
+          <span>사전 환경 구축:</span>
+          <div class="mini-progress-track">
+            <div id="topProgressBar" class="mini-progress-fill"></div>
+          </div>
+          <strong id="progressPercentText" style="color: var(--brand-blue);">0%</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 전체 레이아웃 (사이드바 + 본문) -->
+  <div class="app-layout">
+
+    <!-- 좌측 서브 메뉴 사이드바 -->
+    <aside class="sidebar">
+      <div>
+        
+        <!-- 사이드바 섹션 1: 과정 안내 (트랙별 분리) -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">01. 과정 안내 (개요)</div>
+          <ul class="sidebar-menu">
+            <li>
+              <a class="sidebar-item track-mkt active" onclick="switchTrack('mkt')">
+                <span>🌐 해외영업 실무자</span>
+                <span class="menu-badge mkt">트윈 15층</span>
+              </a>
+            </li>
+            <li>
+              <a class="sidebar-item track-dev" onclick="switchTrack('dev')">
+                <span>⚙️ ID 비SW개발직군</span>
+                <span class="menu-badge dev">G1동 205</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 사이드바 섹션 2: 환경 구축 4단계 -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">02. 실습 환경 구축 가이드</div>
+          <ul class="sidebar-menu">
+            <li>
+              <a href="#step-vscode" class="sidebar-item">
+                <span>1️⃣ VS Code</span>
+              </a>
+            </li>
+            <li>
+              <a href="#step-antigravity" class="sidebar-item">
+                <span>2️⃣ Antigravity CLI</span>
+              </a>
+            </li>
+            <li>
+              <a href="#step-python" class="sidebar-item">
+                <span>3️⃣ Python</span>
+              </a>
+            </li>
+            <li>
+              <a href="#step-git" class="sidebar-item">
+                <span>4️⃣ Git (개발직군 필수)</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- 사이드바 푸터 (담당자 문의) -->
+      <div class="sidebar-footer">
+        <strong style="color: var(--slate-900);">📞 문의 및 지원</strong>
+        <div style="margin-top: 0.35rem; line-height: 1.5;">
+          • <strong>신청:</strong> 정보연 선임<br>
+          &nbsp;&nbsp;<a href="mailto:boyoun.jeong@lge.com" style="color: var(--brand-blue); text-decoration: none; font-size: 0.8rem; word-break: break-all;">boyoun.jeong@lge.com</a><br>
+          • <strong>강사:</strong> IDHRBP 하재선 책임<br>
+          &nbsp;&nbsp;<a href="mailto:jaesun.ha@lge.com" style="color: var(--brand-blue); text-decoration: none; font-size: 0.8rem; word-break: break-all;">jaesun.ha@lge.com</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 우측 메인 콘텐츠 영역 -->
+    <main class="content-area">
+
+      <!-- 트랙 선택 탭 버튼 스위처 (상단 컨트롤) -->
+      <div id="course-overview-section" class="track-switcher">
+        <button id="btnSwitchMkt" class="track-btn active mkt-btn" onclick="switchTrack('mkt')">
+          <span>🌐 해외영업 실무자를 위한 Vibe Coding 과정 (10.19 / 트윈)</span>
+        </button>
+        <button id="btnSwitchDev" class="track-btn dev-btn" onclick="switchTrack('dev')">
+          <span>⚙️ 비SW개발 직군을 위한 Vibe Coding 과정 (10.26 / G1동)</span>
+        </button>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- [뷰 1] 해외영업 실무자 대상 과정안내 (트윈) -->
+      <!-- ========================================== -->
+      <div id="viewMkt" class="course-view active">
+        
+        <!-- 히어로 배너 (포스터 재현) -->
+        <div class="hero-card mkt-hero">
+          <div class="hero-dept">[MS ID 사업부] 2026 하반기 실무 AX 역량강화 교육</div>
+          <h1 class="hero-title">해외영업 실무자를 위한 Vibe Coding 과정</h1>
+          <p class="hero-subtitle">코딩 지식 없이 자연어로 만드는 맞춤형 바이어 앱 & 실적 대시보드</p>
+          <div class="hero-learning-net">
+            <span>🔍 러닝넷 검색:</span>
+            <strong>[MS][ID]B2B 해외영업 마케팅직군을 위한 바이브 코딩</strong>
+          </div>
+        </div>
+
+        <!-- 핵심 신청 요강 -->
+        <div class="info-summary-card mkt-summary">
+          <div class="info-summary-header">
+            <span>🗓️</span>
+            <span>핵심 교육 안내 및 신청 요강</span>
+          </div>
+          <ul class="info-summary-list">
+            <li class="info-summary-item">
+              <strong>신청 기간:</strong> 2026. 10. 07 ~ 10. 13 &nbsp;|&nbsp; <strong>모집 정원:</strong> 20명 선착순마감
+            </li>
+            <li class="info-summary-item">
+              <strong>교육 일시:</strong> 2026. 10. 19 (월) 09:00 ~ 17:00 (총 7시간) &nbsp;|&nbsp; <strong>교육 장소:</strong> 트윈 15층 디지털룸
+            </li>
+          </ul>
+        </div>
+
+        <!-- 01 & 02 & 03 섹션 카드 -->
+        <div class="overview-grid">
+          
+          <!-- 01. 과정 개요 -->
+          <div class="section-card">
+            <div class="section-heading-wrapper">
+              <h2 class="section-title">
+                <span class="section-num">01.</span>
+                <span>과정 개요 (Overview)</span>
+              </h2>
+            </div>
+            <p class="overview-text">
+              코딩 지식 없이도 비즈니스 의도(Vibe)를 AI Agent에게 자연어로 지시하여, 실적 엑셀 데이터를 웹 대시보드로 즉시 시각화하고 ID Sales 프롬프트 kit을 활용해 실전 버티컬 수주 활동을 완결하는 체험형 실습 과정입니다.
+            </p>
+          </div>
+
+          <!-- 02. 학습 목표 -->
+          <div class="section-card">
+            <div class="section-heading-wrapper">
+              <h2 class="section-title">
+                <span class="section-num">02.</span>
+                <span>학습 목표 (Key Takeaways)</span>
+              </h2>
+            </div>
+            <ul class="target-checklist mkt-checklist">
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>바이브코딩 핵심 개념 이해 및 사내 AI CLI 실습 환경 구축</span>
+              </li>
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>자연어 프롬프트 기반의 ID제품 바이어 맞춤형 카탈로그 웹앱 개발</span>
+              </li>
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>매출/실적 엑셀 데이터의 AI 자율 디버깅 및 인터랙티브 웹 대시보드 생성</span>
+              </li>
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>ID 전용 Sales 프롬프트 kit을 활용한 버티컬 수주 활동 및 고객 제안 자료화</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 03. 커리큘럼 테이블 -->
+          <div class="section-card">
+            <div class="section-heading-wrapper">
+              <h2 class="section-title">
+                <span class="section-num">03.</span>
+                <span>상세 교육 커리큘럼 (Curriculum)</span>
+              </h2>
+            </div>
+            <div class="table-container">
+              <table class="curriculum-table">
+                <thead>
+                  <tr>
+                    <th style="width: 15%;">구분</th>
+                    <th style="width: 25%;">시간</th>
+                    <th>세부 실습 및 학습 내용</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>도입</strong></td>
+                    <td>09:00 ~ 11:00</td>
+                    <td>바이브코딩 이해 및 사내 승인 AI CLI 도구 설치 / 기본 프롬프팅 실습</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-mkt">실습 1</span></td>
+                    <td>11:00 ~ 12:00</td>
+                    <td>ID제품 바이어 맞춤형 카탈로그 웹 어플리케이션 제작 및 시연</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-mkt">실습 2</span></td>
+                    <td>13:00 ~ 14:00</td>
+                    <td>엑셀 실적 데이터의 자율 에러 탐색, 결측치 보정 및 디버깅</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-mkt">실습 3</span></td>
+                    <td>14:00 ~ 15:00</td>
+                    <td>매출 실적 분석 및 인터랙티브 웹 대시보드 구현</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-mkt">실습 4</span></td>
+                    <td>15:00 ~ 17:00</td>
+                    <td>AX 기반 버티컬 수주 활동 체험, 고객 제안 PPT 자동 생성 및 공유</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 안내 및 주의사항 -->
+        <div class="notice-card">
+          <h3 class="notice-title">
+            <span>📌</span>
+            <span>안내 및 준비사항 (Notice)</span>
+          </h3>
+          <ul class="notice-list">
+            <li>개인 업무용 노트북을 필히 지참하시기 바랍니다. (실습 환경 사전 점검 권장)</li>
+            <li>교육생별 최적화된 AI CLI 도구 선정을 위해 과정 등록 완료 후 별도 설문 조사가 진행됩니다.</li>
+            <li><strong>문의처:</strong> 신청: 정보연 선임 (<a href="mailto:boyoun.jeong@lge.com" style="color: var(--brand-blue); text-decoration: underline;">boyoun.jeong@lge.com</a>) &nbsp;|&nbsp; 강사: IDHRBP 하재선 책임 (<a href="mailto:jaesun.ha@lge.com" style="color: var(--brand-blue); text-decoration: underline;">jaesun.ha@lge.com</a>)</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- [뷰 2] ID 비SW개발 직군 대상 과정안내 (개발) -->
+      <!-- ========================================== -->
+      <div id="viewDev" class="course-view">
+        
+        <!-- 히어로 배너 (개발 포스터 재현) -->
+        <div class="hero-card dev-hero">
+          <div class="hero-dept">[MS ID 사업부] 2026 하반기 ID개발 AX 역량강화 교육</div>
+          <h1 class="hero-title">비SW개발 직군을 위한 Vibe Coding 과정</h1>
+          <p class="hero-subtitle">자연어 기반 부품 스펙 조회, 불량률 분석 대시보드 및 8D 보고서 자동화</p>
+          <div class="hero-learning-net">
+            <span>🔍 러닝넷 검색:</span>
+            <strong>[MS][ID]비SW개발 직군을 위한 바이브코딩</strong>
+          </div>
+        </div>
+
+        <!-- 핵심 신청 요강 -->
+        <div class="info-summary-card dev-summary">
+          <div class="info-summary-header">
+            <span>🗓️</span>
+            <span>핵심 교육 안내 및 신청 요강</span>
+          </div>
+          <ul class="info-summary-list">
+            <li class="info-summary-item">
+              <strong>신청 기간:</strong> 2026. 10. 07 ~ 10. 20 &nbsp;|&nbsp; <strong>모집 정원:</strong> 20명 선착순마감
+            </li>
+            <li class="info-summary-item">
+              <strong>교육 일시:</strong> 2026. 10. 26 (월) 08:00 ~ 16:00 (총 7시간) &nbsp;|&nbsp; <strong>교육 장소:</strong> G1동 205 강의장
+            </li>
+          </ul>
+        </div>
+
+        <!-- 01 & 02 & 03 섹션 카드 -->
+        <div class="overview-grid">
+          
+          <!-- 01. 과정 개요 -->
+          <div class="section-card">
+            <div class="section-heading-wrapper">
+              <h2 class="section-title">
+                <span class="section-num" style="color: var(--dev-blue);">01.</span>
+                <span>과정 개요 (Overview)</span>
+              </h2>
+            </div>
+            <p class="overview-text">
+              품질, 생산, 기구, 회로 등 비SW 엔지니어링 직무 담당자가 코딩 없이 자연어로 AI 도구를 활용하여, 부품 스펙 조회 및 공정 불량/공차 분석 대시보드를 직접 구축하고 8D 품질 보고서 작성까지 자동화하는 실전 AX 과정입니다.
+            </p>
+          </div>
+
+          <!-- 02. 학습 목표 -->
+          <div class="section-card">
+            <div class="section-heading-wrapper">
+              <h2 class="section-title">
+                <span class="section-num" style="color: var(--dev-blue);">02.</span>
+                <span>학습 목표 (Key Takeaways)</span>
+              </h2>
+            </div>
+            <ul class="target-checklist dev-checklist">
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>엔지니어링 업무에 특화된 바이브코딩 Tool 설치 및 AI 에이전트 활용법 습득</span>
+              </li>
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>복잡한 하드웨어 부품 스펙 및 규격 데이터의 원클릭 조회 대시보드 구축</span>
+              </li>
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>공정 불량률 및 공차 이탈 데이터의 시각화와 자율 원인 분석</span>
+              </li>
+              <li>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <span>PPT 생성 Skill을 통한 표준 8D 품질 보고서 자동 생성 및 AX Studio 배포</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 03. 커리큘럼 테이블 -->
+          <div class="section-card">
+            <div class="section-heading-wrapper">
+              <h2 class="section-title">
+                <span class="section-num" style="color: var(--dev-blue);">03.</span>
+                <span>상세 교육 커리큘럼 (Curriculum)</span>
+              </h2>
+            </div>
+            <div class="table-container">
+              <table class="curriculum-table">
+                <thead>
+                  <tr>
+                    <th style="width: 15%;">구분</th>
+                    <th style="width: 25%;">시간</th>
+                    <th>세부 실습 및 학습 내용</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>도입</strong></td>
+                    <td>08:00 ~ 10:00</td>
+                    <td>바이브코딩 이해 및 엔지니어링용 AI CLI 도구 설치 / 기본 조작법</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-dev">실습 1</span></td>
+                    <td>10:00 ~ 11:00</td>
+                    <td>부품 스펙 및 도면/규격 조회 대시보드 웹앱 개발</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-dev">실습 2</span></td>
+                    <td>11:00 ~ 12:00</td>
+                    <td>공정 불량률 및 공차 이탈 자율 분석 대시보드 개발</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-dev">실습 3</span></td>
+                    <td>13:00 ~ 14:00</td>
+                    <td>PPT 생성 Skill 연동 및 표준 8D 품질/이슈 보고서 자동화</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-step-dev">실습 4</span></td>
+                    <td>14:00 ~ 16:00</td>
+                    <td>AX Studio를 통한 개발 앱 사내 퍼블리시 및 부서 내 공유/배포</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 안내 및 주의사항 -->
+        <div class="notice-card">
+          <h3 class="notice-title">
+            <span>📌</span>
+            <span>안내 및 준비사항 (Notice)</span>
+          </h3>
+          <ul class="notice-list">
+            <li>실습용 개인 노트북을 필히 지참하시기 바랍니다.</li>
+            <li>실습에 활용할 AI CLI 도구 및 사전 환경 설정에 대해 등록 후 개별 서베이가 진행됩니다.</li>
+            <li><strong>문의처:</strong> 신청: 정보연 선임 (<a href="mailto:boyoun.jeong@lge.com" style="color: var(--brand-blue); text-decoration: underline;">boyoun.jeong@lge.com</a>) &nbsp;|&nbsp; 강사: IDHRBP 하재선 책임 (<a href="mailto:jaesun.ha@lge.com" style="color: var(--brand-blue); text-decoration: underline;">jaesun.ha@lge.com</a>)</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- 공통 디바이더: 환경 구축 가이드 안내 -->
+      <div class="divider-heading">
+        <span class="divider-pill">
+          <span>🛠️</span>
+          <span>실습 사전 준비: 4단계 환경 구축 가이드</span>
+        </span>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- [STEP 1] Visual Studio Code(VS Code) 설치 -->
+      <!-- ========================================== -->
+      <article id="step-vscode" class="install-step-card">
+        <header class="step-header">
+          <div class="step-badge-group">
+            <span class="step-number">STEP 1</span>
+            <h2 class="step-title">Visual Studio Code (VS Code) 설치</h2>
+          </div>
+          <span class="target-tag">소요 시간: 약 5~10분</span>
+        </header>
+        <div class="step-body">
+          <p class="overview-text">
+            <strong>Visual Studio Code</strong>는 AI(Antigravity CLI)가 만들어 주는 코드와 파일을 눈으로 직접 확인하고 편집하는 작업 화면(에디터)입니다.
+          </p>
+
+          <div class="callout callout-info">
+            <span>💡</span>
+            <div>
+              <strong>회사 PC 권장 설치 방식: User Setup</strong><br>
+              관리자(Admin) 권한이 없어도 <code>%LOCALAPPDATA%</code> 경로에 안전하게 설치되며 자동 업데이트를 지원합니다.
+            </div>
+          </div>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">1. 공식 다운로드 및 설치</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            공식 사이트에서 다운로드 후 실행합니다: 
+            <a href="https://go.microsoft.com/fwlink/?LinkID=534107" target="_blank" style="color: var(--brand-blue); font-weight: 600;">VS Code User Setup 다운로드 (Windows)</a>
+          </p>
+
+          <div class="callout callout-warning">
+            <span>⚠️</span>
+            <div>
+              <strong>설치 마법사 실행 시 필수 체크 항목!</strong><br>
+              [추가 작업 선택] 화면에서 <strong>"PATH에 추가 (다시 시작한 후 사용 가능)"</strong> 옵션을 반드시 체크해야 터미널에서 <code>code .</code> 명령어를 바로 사용할 수 있습니다.
+            </div>
+          </div>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">2. 한국어 팩 및 필수 확장(Extension) 원클릭 설치</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            새로 연 PowerShell 터미널에 아래 명령어를 복사하여 붙여넣으면 한글 언어팩과 AI 실습에 필요한 핵심 확장이 일괄 설치됩니다.
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>PowerShell (필수 확장 일괄 설치)</span>
+              <button class="copy-btn" onclick="copyCode(this)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>복사</span>
+              </button>
+            </div>
+            <pre class="code-content"><code>code --install-extension MS-CJKLM.vscode-language-pack-ko
+code --install-extension yzhang.markdown-all-in-one
+code --install-extension ms-vscode.live-server
+code --install-extension bierner.markdown-mermaid
+code --install-extension yzane.markdown-pdf
+code --install-extension tomoki1207.pdf</code></pre>
+          </div>
+
+          <!-- 인터랙티브 체크리스트 -->
+          <div class="interactive-checklist">
+            <div class="checklist-title">
+              <span>VS Code 준비 완료 체크리스트</span>
+              <span style="font-size: 0.8rem; color: var(--slate-500);">진행 상황이 브라우저에 자동 저장됩니다</span>
+            </div>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">User Setup 설치 시 'PATH에 추가' 옵션을 체크하고 설치 완료함</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">터미널에서 <code>code --version</code> 실행 시 버전이 정상 출력됨</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">한국어 언어팩 및 마크다운/HTML 필수 확장을 설치함</span>
+            </label>
+          </div>
+        </div>
+      </article>
+
+      <!-- ========================================== -->
+      <!-- [STEP 2] Antigravity CLI 설치              -->
+      <!-- ========================================== -->
+      <article id="step-antigravity" class="install-step-card">
+        <header class="step-header">
+          <div class="step-badge-group">
+            <span class="step-number">STEP 2</span>
+            <h2 class="step-title">Antigravity CLI (agy) 설치</h2>
+          </div>
+          <span class="target-tag">소요 시간: 약 10~15분</span>
+        </header>
+        <div class="step-body">
+          <p class="overview-text">
+            <strong>Antigravity CLI</strong>는 터미널에서 AI 에이전트와 자연어로 대화하며 프로그램 코드를 생성하고 자율 디버깅을 수행하는 본 교육의 핵심 도구입니다.
+          </p>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">1. 운영체제별 원클릭 설치 명령어</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            PowerShell(Windows) 또는 터미널(macOS) 창에 아래 명령어를 복사 후 Enter를 누르세요.
+          </p>
+
+          <!-- Windows 명령어 -->
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>Windows (PowerShell)</span>
+              <button class="copy-btn" onclick="copyCode(this)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>복사</span>
+              </button>
+            </div>
+            <pre class="code-content"><code>irm https://antigravity.google/cli/install.ps1 | iex</code></pre>
+          </div>
+
+          <!-- macOS / Linux 명령어 -->
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>macOS / Linux</span>
+              <button class="copy-btn" onclick="copyCode(this)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>복사</span>
+              </button>
+            </div>
+            <pre class="code-content"><code>curl -fsSL https://antigravity.google/cli/install.sh | bash</code></pre>
+          </div>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">2. 설치 확인 및 최초 Google 로그인</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            열려 있는 터미널을 완전히 닫고 <strong>새 터미널</strong>을 연 후 실행합니다.
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>터미널 (실행 및 로그인)</span>
+              <button class="copy-btn" onclick="copyCode(this)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>복사</span>
+              </button>
+            </div>
+            <pre class="code-content"><code>agy --version
+agy</code></pre>
+          </div>
+
+          <div class="callout callout-success">
+            <span>🎉</span>
+            <div>
+              <code>agy</code>를 입력하면 웹 브라우저가 자동으로 열립니다. Google 계정으로 로그인하고 [허용/Allow]을 누르면 즉시 연동 완료됩니다!
+            </div>
+          </div>
+
+          <!-- 인터랙티브 체크리스트 -->
+          <div class="interactive-checklist">
+            <div class="checklist-title">
+              <span>Antigravity CLI 준비 완료 체크리스트</span>
+            </div>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">원클릭 설치 스크립트 실행을 완료함</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">새 터미널에서 <code>agy --version</code> 으로 버전이 정상 출력됨</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label"><code>agy</code> 실행 후 브라우저 Google 계정 로그인을 완료함</span>
+            </label>
+          </div>
+        </div>
+      </article>
+
+      <!-- ========================================== -->
+      <!-- [STEP 3] Python(파이썬) 설치               -->
+      <!-- ========================================== -->
+      <article id="step-python" class="install-step-card">
+        <header class="step-header">
+          <div class="step-badge-group">
+            <span class="step-number">STEP 3</span>
+            <h2 class="step-title">Python (파이썬) 설치</h2>
+          </div>
+          <span class="target-tag">소요 시간: 약 10~15분</span>
+        </header>
+        <div class="step-body">
+          <p class="overview-text">
+            <strong>Python</strong>은 수강생이 문법을 외우기 위한 것이 아니라, AI가 만들어 준 데이터 분석 및 엑셀 자동화 코드를 내 컴퓨터에서 작동시키는 <strong>'실행 엔진'</strong> 역할을 합니다.
+          </p>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">1. 공식 인스톨러 다운로드</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            공식 웹사이트 접속: 
+            <a href="https://www.python.org/downloads/" target="_blank" style="color: var(--brand-blue); font-weight: 600;">Python 공식 다운로드 (Python 3.11 또는 3.12 권장)</a>
+          </p>
+
+          <!-- 핵심 경고: PATH 체크 필수 -->
+          <div class="callout callout-warning" style="border-left-width: 6px;">
+            <span style="font-size: 1.5rem;">⚠️</span>
+            <div>
+              <strong style="color: #b45309; font-size: 1.05rem;">[가장 중요] 첫 설치 화면 맨 아래 체크박스 필수 확인!</strong><br>
+              인스톨러 첫 화면 하단의 <strong>[ Add python.exe to PATH ]</strong> 체크박스에 반드시 체크 후 <strong>[Install Now]</strong>를 클릭해야 합니다. 체크하지 않으면 터미널에서 명령어가 인식되지 않습니다.
+            </div>
+          </div>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">2. 정상 설치 1초 테스트 & pip 최신화</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            새 터미널을 열고 아래 명령어를 순서대로 실행하여 파이썬 런타임과 패키지 관리자가 정상 동작하는지 검증합니다.
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>터미널 (버전 확인 & 1초 테스트)</span>
+              <button class="copy-btn" onclick="copyCode(this)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>복사</span>
+              </button>
+            </div>
+            <pre class="code-content"><code>python --version
+python -c "print('Hello, Vibe Coding!')"
+python -m pip install --upgrade pip</code></pre>
+          </div>
+
+          <!-- 트러블슈팅 아코디언 -->
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">💡 자주 겪는 문제 해결</h4>
+          <details class="trouble-accordion">
+            <summary>Q. 'python'을 입력했는데 마이크로소프트 스토어가 열립니다.</summary>
+            <div class="trouble-content">
+              Windows 작업표시줄 검색창에 <strong>"앱 실행 별칭"</strong>을 검색하여 실행한 뒤, <code>python.exe</code> 및 <code>python3.exe</code> 항목의 스위치를 <strong>[끔(Off)]</strong>으로 변경하고 터미널을 재시작하세요.
+            </div>
+          </details>
+          <details class="trouble-accordion">
+            <summary>Q. 'python은(는) 내부 또는 외부 명령... 이 아닙니다' 에러가 납니다.</summary>
+            <div class="trouble-content">
+              설치 시 <code>Add python.exe to PATH</code>를 체크하지 않았을 때 발생합니다. 다운로드한 설치 파일을 다시 실행하여 <strong>[Modify]</strong>를 누르고 환경 변수 추가를 체크 후 다시 설치하세요.
+            </div>
+          </details>
+
+          <!-- 인터랙티브 체크리스트 -->
+          <div class="interactive-checklist">
+            <div class="checklist-title">
+              <span>Python 준비 완료 체크리스트</span>
+            </div>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">설치 시 'Add python.exe to PATH'에 체크하고 설치를 마침</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">새 터미널에서 <code>python --version</code> 으로 버전 3.11~3.12 확인됨</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label"><code>python -c "print('Hello, Vibe Coding!')"</code> 실행 시 문구가 출력됨</span>
+            </label>
+          </div>
+        </div>
+      </article>
+
+      <!-- ========================================== -->
+      <!-- [STEP 4] Git 설치 (개발조직 필수)           -->
+      <!-- ========================================== -->
+      <article id="step-git" class="install-step-card" style="border: 1px solid #f472b6;">
+        <header class="step-header" style="background: #fdf2f8;">
+          <div class="step-badge-group">
+            <span class="step-number dev">STEP 4</span>
+            <h2 class="step-title">Git (깃) 설치</h2>
+          </div>
+          <span class="target-tag dev-only">📌 개발조직 / 엔지니어 대상 (영업직군은 선택)</span>
+        </header>
+        <div class="step-body">
+          <p class="overview-text">
+            <strong>Git</strong>은 로컬 PC에서 AI와 함께 작성한 프로그램 코드와 설정을 사내 DEJ Workspace(서버)로 안전하게 올려서 배포(Publish)하기 위한 <strong>'필수 전송 도구'</strong>입니다. (비SW 개발직군 / HW·기구·품질·생산기술 엔지니어 및 DEJ 배포 예정자 필수)
+          </p>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">1. 다운로드 및 설치 핵심 3대 옵션</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            공식 다운로드 페이지: 
+            <a href="https://git-scm.com/download/win" target="_blank" style="color: #be185d; font-weight: 600;">Git for Windows 64-bit 다운로드</a>
+          </p>
+
+          <div class="callout callout-info">
+            <span>💡</span>
+            <div>
+              <strong>설치 마법사 시 [Next] 누르며 주의할 3가지 화면:</strong><br>
+              1. <strong>기본 편집기(Editor):</strong> "Use Visual Studio Code as Git's default editor" 선택<br>
+              2. <strong>PATH 환경변수:</strong> "Git from the command line and also from 3rd-party software" 선택<br>
+              3. <strong>줄바꿈(Line ending):</strong> "Checkout Windows-style, commit Unix-style line endings" 선택
+            </div>
+          </div>
+
+          <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem;">2. 설치 확인 및 최초 1회 사용자 정보 등록</h4>
+          <p style="font-size: 0.95rem; color: var(--slate-700);">
+            새 터미널을 열고 본인의 이름과 회사 이메일을 등록합니다. (사내 DEJ 서버 배포 시 필수)
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>PowerShell (사용자 등록 & 한글 깨짐 방지)</span>
+              <button class="copy-btn" onclick="copyCode(this)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span>복사</span>
+              </button>
+            </div>
+            <pre class="code-content"><code>git --version
+git config --global user.name "홍길동"
+git config --global user.email "gildong.hong@company.com"
+git config --global core.quotepath false</code></pre>
+          </div>
+
+          <div class="callout callout-warning">
+            <span>⚠️</span>
+            <div>
+              <strong>사내 보안망 SSL 인증서 에러 발생 시 임시 해결법:</strong><br>
+              회사 네트워크(프록시)에서 <code>SSL certificate problem</code>이 발생할 경우 터미널에 <code>git config --global http.sslVerify false</code>를 입력하여 우회할 수 있습니다.
+            </div>
+          </div>
+
+          <!-- 인터랙티브 체크리스트 -->
+          <div class="interactive-checklist">
+            <div class="checklist-title">
+              <span>Git 준비 완료 체크리스트 (개발 직군)</span>
+            </div>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">새 터미널에서 <code>git --version</code> 으로 버전이 정상 출력됨</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label"><code>git config --global user.name</code> 및 <code>user.email</code> 등록을 마침</span>
+            </label>
+            <label class="checklist-item">
+              <input type="checkbox" onchange="updateProgress()">
+              <span class="checklist-label">VS Code의 [소스 제어(Ctrl+Shift+G)] 메뉴에서 정상 인식됨</span>
+            </label>
+          </div>
+        </div>
+      </article>
+
+    </main>
+
+  </div>
+
+  <!-- 복사 완료 피드백 토스트 팝업 -->
+  <div id="toastPopup" class="toast-popup">클립보드에 복사되었습니다! 👍</div>
+
+  <script>
+    // 과정 트랙 전환 (해외영업 vs 비SW개발직군)
+    function switchTrack(track) {
+      const viewMkt = document.getElementById('viewMkt');
+      const viewDev = document.getElementById('viewDev');
+      const btnMkt = document.getElementById('btnSwitchMkt');
+      const btnDev = document.getElementById('btnSwitchDev');
+      const topNavMkt = document.getElementById('topNavMkt');
+      const topNavDev = document.getElementById('topNavDev');
+      const sidebarMkt = document.querySelector('.sidebar-item.track-mkt');
+      const sidebarDev = document.querySelector('.sidebar-item.track-dev');
+
+      if (track === 'mkt') {
+        if (viewMkt) viewMkt.classList.add('active');
+        if (viewDev) viewDev.classList.remove('active');
+        if (btnMkt) btnMkt.classList.add('active');
+        if (btnDev) btnDev.classList.remove('active');
+        if (topNavMkt) topNavMkt.classList.add('active');
+        if (topNavDev) topNavDev.classList.remove('active');
+        if (sidebarMkt) sidebarMkt.classList.add('active');
+        if (sidebarDev) sidebarDev.classList.remove('active');
+      } else {
+        if (viewMkt) viewMkt.classList.remove('active');
+        if (viewDev) viewDev.classList.add('active');
+        if (btnMkt) btnMkt.classList.remove('active');
+        if (btnDev) btnDev.classList.add('active');
+        if (topNavMkt) topNavMkt.classList.remove('active');
+        if (topNavDev) topNavDev.classList.add('active');
+        if (sidebarMkt) sidebarMkt.classList.remove('active');
+        if (sidebarDev) sidebarDev.classList.add('active');
+      }
+
+      // 스크롤 상단으로 살짝 이동
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    // 클립보드 복사 함수
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block-wrapper').querySelector('code');
+      const textToCopy = codeBlock.innerText;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span>복사됨! ✅</span>';
+        btn.classList.add('copied');
+
+        showToast("명령어가 클립보드에 복사되었습니다!");
+
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('복사 실패:', err);
+      });
+    }
+
+    // 토스트 팝업 표시
+    function showToast(message) {
+      const toast = document.getElementById('toastPopup');
+      toast.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // 체크리스트 상태 로컬스토리지 저장 & 상단 프로그레스 바 갱신
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll('.interactive-checklist input[type="checkbox"]');
+      let checkedCount = 0;
+      const state = [];
+
+      checkboxes.forEach((cb, idx) => {
+        if (cb.checked) checkedCount++;
+        state.push(cb.checked);
+      });
+
+      localStorage.setItem('vibe_coding_checklist_state', JSON.stringify(state));
+
+      const percentage = Math.round((checkedCount / checkboxes.length) * 100);
+      document.getElementById('topProgressBar').style.width = percentage + '%';
+      document.getElementById('progressPercentText').innerText = percentage + '%';
+    }
+
+    // 페이지 로드 시 초기화
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedState = localStorage.getItem('vibe_coding_checklist_state');
+      if (savedState) {
+        try {
+          const stateArr = JSON.parse(savedState);
+          const checkboxes = document.querySelectorAll('.interactive-checklist input[type="checkbox"]');
+          checkboxes.forEach((cb, idx) => {
+            if (stateArr[idx] !== undefined) {
+              cb.checked = stateArr[idx];
+            }
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      updateProgress();
+
+      // 사이드바 환경 구축 링크 클릭 시 Step 카드의 제목부터 화면 최상단에 보이도록 정밀 스크롤
+      const sidebarStepLinks = document.querySelectorAll('.sidebar a[href^="#step-"]');
+      sidebarStepLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          const targetId = this.getAttribute('href');
+          const targetElem = document.querySelector(targetId);
+          if (targetElem) {
+            e.preventDefault();
+            const topHeaderHeight = 65; // 고정 상단 헤더 높이(px)
+            const elemTop = targetElem.getBoundingClientRect().top + window.pageYOffset;
+            
+            window.scrollTo({
+              top: elemTop - topHeaderHeight,
+              behavior: 'smooth'
+            });
+
+            // 사이드바 active 상태 갱신
+            sidebarStepLinks.forEach(el => el.classList.remove('active'));
+            this.classList.add('active');
+
+            // 브라우저 주소창 해시 갱신
+            history.pushState(null, null, targetId);
+          }
+        });
+      });
+
+      // 스크롤 시 현재 보고 있는 Step 카드 메뉴 자동 하이라이트 (ScrollSpy)
+      window.addEventListener('scroll', () => {
+        const stepCards = document.querySelectorAll('.install-step-card');
+        const scrollPosition = window.pageYOffset + 100;
+
+        stepCards.forEach(card => {
+          const cardTop = card.offsetTop;
+          const cardHeight = card.offsetHeight;
+          const cardId = card.getAttribute('id');
+
+          if (scrollPosition >= cardTop && scrollPosition < cardTop + cardHeight) {
+            sidebarStepLinks.forEach(link => {
+              if (link.getAttribute('href') === '#' + cardId) {
+                link.classList.add('active');
+              } else {
+                link.classList.remove('active');
+              }
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
