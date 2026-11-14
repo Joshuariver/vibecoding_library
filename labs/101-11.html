@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>마크다운으로 문서 구조 만들기</title>
+<style>
+@font-face{font-family:"Pretendard";src:url("../fonts/PretendardVariable.woff2") format("woff2-variations"),url("../fonts/PretendardVariable.woff2") format("woff2");font-weight:45 920;font-style:normal;font-display:swap}
+:root{
+  --bg:#f6f7fb; --surface:#fff; --text:#1c2033; --muted:#646a82; --border:#dfe2ee;
+  --accent:#4f46e5; --accent-text:#fff; --accent-soft:#eceafd;
+  --ok:#0d7c55; --ok-soft:#e1f6ed; --bad:#c62f3d; --bad-soft:#fde8ea; --warn:#9a6700; --warn-soft:#fff3d1;
+  --code-bg:#141827; --code-text:#e6e9f5; --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1220; --surface:#181c30; --text:#e8eaf6; --muted:#9aa1bd; --border:#2b3150;
+    --accent:#8b86ff; --accent-text:#10122a; --accent-soft:#25274a;
+    --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016;
+    --code-bg:#0a0d19;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1220; --surface:#181c30; --text:#e8eaf6; --muted:#9aa1bd; --border:#2b3150;
+  --accent:#8b86ff; --accent-text:#10122a; --accent-soft:#25274a;
+  --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016;
+  --code-bg:#0a0d19;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 "Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header.top h1{font-size:1.05rem;margin:0;flex:1 1 auto}
+header.top h1 small{color:var(--muted);font-weight:400;margin-left:6px}
+nav.toc{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:.85rem;padding:4px 10px;border-radius:99px;border:1px solid var(--border)}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent)}
+main{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:0 0 22px;scroll-margin-top:110px}
+section.card h2{margin:0 0 4px;font-size:1.25rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:99px;margin-bottom:6px}
+.lead{color:var(--muted);margin:0 0 14px}
+.terms{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.terms span{font-size:.8rem;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:7px 14px;border-radius:9px;transition:transform .12s,background .15s,border-color .15s}
+button:hover{border-color:var(--accent)}
+button:active{transform:scale(.97)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+button.sm{padding:3px 10px;font-size:.85rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.box{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)}
+.box h3{margin:0 0 6px;font-size:.95rem}
+.good{border-color:var(--ok);background:var(--ok-soft)}
+.badbox{border-color:var(--bad);background:var(--bad-soft)}
+pre,code,textarea.code{font-family:"Cascadia Code","D2Coding",Consolas,monospace}
+pre.code{background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:10px;overflow:auto;margin:0;font-size:.85rem;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+textarea.code{width:100%;min-height:130px;background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:.85rem;resize:vertical}
+textarea.plain,input[type=text],select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
+iframe.preview{width:100%;height:230px;border:1px solid var(--border);border-radius:10px;background:#fff}
+.hint{font-size:.86rem;color:var(--muted)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.92rem;margin-top:12px}
+.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.bar{height:14px;border-radius:99px;background:var(--border);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:.78rem;font-weight:700}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.check{display:flex;gap:8px;align-items:flex-start;padding:4px 0}
+.check input{margin-top:6px;width:18px;height:18px}
+.term-win{background:var(--code-bg);color:var(--code-text);border-radius:10px;padding:12px;font-family:Consolas,monospace;font-size:.85rem;height:210px;overflow:auto}
+.term-win .p{color:#7ee0a8}.term-win .e{color:#ff8b95}.term-win .d{color:#8f97b8}
+.term-in{display:flex;gap:6px;margin-top:8px}
+.tree{font-family:Consolas,monospace;font-size:.88rem;line-height:1.9}
+.tree .f{cursor:pointer;padding:1px 6px;border-radius:6px}
+.tree .f:hover,.tree .f.sel{background:var(--accent-soft);color:var(--accent)}
+.commit{display:flex;align-items:center;gap:10px;padding:6px 10px;border:1px solid var(--border);border-radius:9px;margin:5px 0;background:var(--bg)}
+.commit.head{border-color:var(--accent);background:var(--accent-soft)}
+.commit code{color:var(--muted);font-size:.8rem}
+.flow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:10px 0}
+.node{flex:1 1 150px;text-align:center;border:2px solid var(--border);border-radius:12px;padding:12px;transition:.25s;background:var(--bg)}
+.node.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.arrow{color:var(--muted);font-size:1.4rem}
+.flip{perspective:700px;height:112px;cursor:pointer}
+.flip>div{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on>div{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:.9rem}
+.flip .front{background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:1.05rem}
+.flip .back{background:var(--surface);transform:rotateY(180deg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.opt{display:block;width:100%;text-align:left;margin:5px 0}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+html{scroll-behavior:auto}
+body.lab{background:var(--surface)}
+body.lab main{max-width:none;margin:0;padding:0}
+body.lab section.card{border:0;border-radius:0;background:transparent;padding:4px 2px 12px;margin:0}
+body.lab section.card>.tag,body.lab section.card>h2,body.lab section.card>.terms{display:none}
+h3.st{font-size:1rem;margin:18px 0 6px}
+.lines{display:grid;gap:6px}
+.lrow{display:flex;gap:8px;align-items:center}
+.lrow select{width:150px;flex:0 0 150px}
+.lrow .ltext{min-width:0;overflow-wrap:anywhere}
+.before{font-size:.92rem;color:var(--muted)}
+.after{overflow-wrap:anywhere}
+.after h1{font-size:1.3rem;margin:.2em 0}.after h2{font-size:1.1rem;margin:.6em 0 .2em}
+.after blockquote{margin:.5em 0;padding:4px 12px;border-left:4px solid var(--accent);color:var(--muted)}
+.after ul{margin:.3em 0;padding-left:1.3em}.after p{margin:.4em 0}
+.after pre.code{margin:.5em 0}
+@media(max-width:560px){.lrow{flex-direction:column;align-items:stretch}.lrow select{width:100%;flex:none}}
+</style>
+</head>
+<body class="lab">
+<main>
+<section class="card" id="s11">
+  <span class="tag">AI 용어</span>
+  <h2>11. 마크다운으로 문서 구조 만들기</h2>
+  <p class="lead">흐트러진 업무 메모에 <b>제목 · 목록 · 강조 · 코드 블록</b>을 지정해 구조를 만들고, 전후 가독성을 비교해 보세요.</p>
+  <div class="terms"><span>마크다운</span><span>제목</span><span>목록</span><span>코드 블록</span><span>강조</span></div>
+
+  <h3 class="st">① 메모 입력 <span class="hint">(한 줄이 한 덩어리입니다. 자유롭게 고쳐도 됩니다)</span></h3>
+  <label for="memo" class="hint">업무 메모 (최대 30줄)</label>
+  <textarea id="memo" class="plain" rows="9" maxlength="2000"></textarea>
+
+  <h3 class="st">② 줄마다 서식 고르기</h3>
+  <p class="hint">제목·목록·코드 블록 등 <b>서로 다른 서식 3가지 이상</b>을 골라 보세요.</p>
+  <div id="lines" class="lines"></div>
+
+  <h3 class="st">③ 전 / 후 비교</h3>
+  <div class="grid2">
+    <div class="box"><h3>전: 구조 없는 메모</h3><div id="before" class="before" aria-label="구조 없는 메모"></div></div>
+    <div class="box"><h3>후: 마크다운 미리보기</h3><div id="after" class="after" aria-label="마크다운 미리보기"></div></div>
+  </div>
+  <h3 class="st">마크다운 원문</h3>
+  <pre class="code" id="mdsrc" aria-label="마크다운 원문"></pre>
+
+  <div class="row" style="margin-top:12px">
+    <button class="primary" id="check">결과 확인</button>
+    <span id="status" class="hint" role="status" aria-live="polite"></span>
+  </div>
+  <div id="result" class="note" hidden role="status" aria-live="polite"></div>
+
+  <h3 class="st">내 도구에서 변환시키는 요청문</h3>
+  <p class="hint">이 화면은 AI를 호출하지 않습니다. 아래 요청문을 복사해 사용하는 AI 도구에 붙여 넣을 수 있습니다.</p>
+  <pre class="code" id="prompt">아래 글을 Markdown 형식으로 변환해 주세요.
+제목, 부제목, 목록, 인용문, 코드 블록 등 Markdown 문법을 적절히 활용해 가독성을 높여 주세요.
+원문의 의미나 구조를 유지하면서 문단을 명확히 구분해 주세요.
+원문에 없는 내용은 추가하지 마세요.
+불필요한 공백이나 중복 표현은 정리해 주세요.
+최종 결과는 문서 보관용으로 깔끔하고 일관된 형식을 갖추도록 해 주세요.
+
+[정리할 글]</pre>
+  <div class="row" style="margin-top:8px"><button id="copy">요청문 복사</button><span id="copyMsg" class="hint" role="status" aria-live="polite"></span></div>
+  <div class="note warn">마크다운은 문서의 구조를 분명하게 보여주는 형식일 뿐, AI 답변의 품질이나 정확성을 보장하지는 않습니다. PDF·HTML로 바꾸려면 VS Code 확장 같은 별도 변환 도구가 필요하며, 이 화면에는 변환 기능이 없습니다.</div>
+</section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+(function(){
+  var LAB_ID = "101-11", sent = false;
+  function setTheme(v){
+    document.documentElement.setAttribute('data-theme', v);
+    try{ window.dispatchEvent(new Event('themechange')); }catch(e){}
+  }
+  window.toast = function(msg){ try{ parent.postMessage({ type: 'toast', id: LAB_ID, message: String(msg) }, '*'); }catch(e){} };
+  var m = /theme=(light|dark)/.exec(location.hash); if(m) document.documentElement.setAttribute('data-theme', m[1]);
+  window.addEventListener('message', function(e){ if(e.data && e.data.type === 'theme') setTheme(e.data.value); });
+  function report(){ try{ parent.postMessage({ type: 'lab-height', id: LAB_ID, height: Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
+  // 클릭 횟수가 아니라 실습의 핵심 단계를 마쳤을 때만 완료 신호를 보낸다
+  window.labComplete = function(){ if(sent) return; sent = true; try{ parent.postMessage({ type: 'lab-engaged', id: LAB_ID }, '*'); }catch(e){} };
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener('load', report);
+  window.addEventListener('error', function(ev){ try{ parent.postMessage({ type: 'lab-error', id: LAB_ID, message: String(ev.message) }, '*'); }catch(e){} });
+  // 클립보드 권한이 없는 sandbox에서도 복사가 되도록 대체 경로를 둔다
+  window.copyText = function(text, done){
+    function fallback(){
+      var t = document.createElement('textarea'); t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      var ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(t); done(ok);
+    }
+    try{ if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){ done(true); }, fallback); return; } }catch(e){}
+    fallback();
+  };
+})();
+
+(function(){
+  var SAMPLE = ['주간 회의 메모','참석자 김, 이, 박','오늘 결정한 것','로그인 기능은 이번 분기에서 제외','디자인 시안은 금요일까지','할 일','이: 시안 정리','박: 일정표 갱신','실행 명령 npm run build','중요: 배포는 승인 후에만'];
+  var TYPES = [['p','본문'],['h1','제목 (#)'],['h2','부제목 (##)'],['ul','목록 (-)'],['quote','인용 (>)'],['strong','강조 (**)'],['code','코드 블록']];
+  var MAX_LINES = 30, MAX_LEN = 200;
+  var memo = $('#memo'), linesBox = $('#lines'), types = [];
+  memo.value = SAMPLE.join('\n');
+  // 초기 제안: 처음 한 줄은 제목, 나머지는 본문으로 둔다
+  function getLines(){ return memo.value.split('\n').slice(0, MAX_LINES).map(function(l){ return l.slice(0, MAX_LEN); }); }
+
+  function renderLines(){
+    var lines = getLines(); linesBox.textContent = '';
+    lines.forEach(function(text, i){
+      if(!types[i]) types[i] = 'p';
+      var row = document.createElement('div'); row.className = 'lrow';
+      var sel = document.createElement('select'); sel.setAttribute('aria-label', (i + 1) + '번째 줄 서식');
+      TYPES.forEach(function(t){ var o = document.createElement('option'); o.value = t[0]; o.textContent = t[1]; if(types[i] === t[0]) o.selected = true; sel.appendChild(o); });
+      sel.addEventListener('change', function(){ types[i] = sel.value; update(); });
+      var span = document.createElement('span'); span.className = 'ltext'; span.textContent = text === '' ? '(빈 줄)' : text;
+      row.appendChild(sel); row.appendChild(span); linesBox.appendChild(row);
+    });
+    types.length = lines.length;
+  }
+
+  // 사용자가 입력한 글은 항상 textContent 로만 넣는다 (HTML 로 해석하지 않음)
+  function blocks(){
+    var lines = getLines(), out = [], i = 0;
+    while(i < lines.length){
+      var t = types[i] || 'p', text = lines[i];
+      if(text.trim() === ''){ i++; continue; }
+      if(t === 'ul' || t === 'code'){
+        var items = [];
+        while(i < lines.length && (types[i] || 'p') === t){ if(lines[i].trim() !== '') items.push(lines[i]); i++; }
+        out.push({ t: t, items: items });
+      } else { out.push({ t: t, text: text }); i++; }
+    }
+    return out;
+  }
+  function toMarkdown(bs){
+    return bs.map(function(b){
+      switch(b.t){
+        case 'h1': return '# ' + b.text;
+        case 'h2': return '## ' + b.text;
+        case 'quote': return '> ' + b.text;
+        case 'strong': return '**' + b.text + '**';
+        case 'ul': return b.items.map(function(x){ return '- ' + x; }).join('\n');
+        case 'code': return '```\n' + b.items.join('\n') + '\n```';
+        default: return b.text;
+      }
+    }).join('\n\n');
+  }
+  function el(tag, text, cls){ var e = document.createElement(tag); if(text != null) e.textContent = text; if(cls) e.className = cls; return e; }
+  function preview(bs){
+    var box = document.createDocumentFragment();
+    bs.forEach(function(b){
+      if(b.t === 'h1') box.appendChild(el('h1', b.text));
+      else if(b.t === 'h2') box.appendChild(el('h2', b.text));
+      else if(b.t === 'quote') box.appendChild(el('blockquote', b.text));
+      else if(b.t === 'strong'){ var p = el('p'); p.appendChild(el('strong', b.text)); box.appendChild(p); }
+      else if(b.t === 'ul'){ var ul = el('ul'); b.items.forEach(function(x){ ul.appendChild(el('li', x)); }); box.appendChild(ul); }
+      else if(b.t === 'code'){ var pre = el('pre', null, 'code'); pre.appendChild(el('code', b.items.join('\n'))); box.appendChild(pre); }
+      else box.appendChild(el('p', b.text));
+    });
+    return box;
+  }
+  function usedKinds(){ var s = {}; types.forEach(function(t){ if(t !== 'p') s[t] = 1; }); return Object.keys(s); }
+
+  function update(){
+    var bs = blocks();
+    var before = $('#before'); before.textContent = '';
+    getLines().forEach(function(l){ before.appendChild(el('div', l === '' ? ' ' : l)); });
+    var after = $('#after'); after.textContent = ''; after.appendChild(preview(bs));
+    $('#mdsrc').textContent = toMarkdown(bs);
+    var n = usedKinds().length;
+    $('#status').textContent = '지정한 서식 ' + n + '종류 (3종류 이상 필요)';
+    $('#result').hidden = true;
+  }
+  memo.addEventListener('input', function(){ renderLines(); update(); });
+  // 처음 화면은 첫 줄만 제목으로 지정해 둔다
+  renderLines(); types[0] = 'h1'; renderLines(); update();
+
+  $('#check').addEventListener('click', function(){
+    var kinds = usedKinds(), res = $('#result');
+    res.hidden = false;
+    if(kinds.length < 3){
+      res.className = 'note warn';
+      res.textContent = '아직 서식이 ' + kinds.length + '종류입니다. 제목·목록·코드 블록 등 3종류 이상 지정한 뒤 다시 눌러 보세요.';
+      return;
+    }
+    var names = kinds.map(function(k){ return TYPES.filter(function(t){ return t[0] === k; })[0][1]; }).join(', ');
+    res.className = 'note';
+    res.textContent = '구조화 완료: ' + names + '. 제목과 목록으로 나누면 사람이 훑어보기 쉽고, 코드 블록은 명령어·코드를 본문과 분명히 구분해 줍니다. AI에게 긴 자료를 줄 때도 이런 구조가 있으면 어디가 무엇인지 전달하기 쉽습니다. (구조가 있다고 답변이 항상 더 정확해지는 것은 아닙니다.)';
+    labComplete();
+  });
+
+  $('#copy').addEventListener('click', function(){
+    copyText($('#prompt').textContent, function(ok){ $('#copyMsg').textContent = ok ? '복사했습니다.' : '복사하지 못했습니다. 위 글을 직접 선택해 Ctrl+C 로 복사하세요.'; });
+  });
+})();
+</script>
+</body>
+</html>

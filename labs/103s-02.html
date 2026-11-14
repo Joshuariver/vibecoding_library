@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>업무 분해: 자동 · 초안+승인 · 사람</title>
+<style>
+@font-face{font-family:"Pretendard";src:url("../fonts/PretendardVariable.woff2") format("woff2-variations"),url("../fonts/PretendardVariable.woff2") format("woff2");font-weight:45 920;font-style:normal;font-display:swap}
+:root{
+  --bg:#f6f7fa; --surface:#fff; --text:#1c2130; --muted:#5d6479; --border:#dde1ec;
+  --accent:#b4531a; --accent-text:#fff; --accent-soft:#fbeadd;
+  --ok:#0d7c55; --ok-soft:#e1f6ed; --bad:#c62f3d; --bad-soft:#fde8ea; --warn:#8f5f00; --warn-soft:#fff1cc;
+  --code-bg:#161a28; --code-text:#e8ebf6; --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10131c; --surface:#191e2c; --text:#e9ecf6; --muted:#9ba3bd; --border:#2b3249;
+    --accent:#f0a06b; --accent-text:#2a1204; --accent-soft:#3a2517;
+    --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016; --code-bg:#0b0e18;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#191e2c; --text:#e9ecf6; --muted:#9ba3bd; --border:#2b3249;
+  --accent:#f0a06b; --accent-text:#2a1204; --accent-soft:#3a2517;
+  --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016; --code-bg:#0b0e18;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 "Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header.top h1{font-size:1.05rem;margin:0;flex:1 1 auto}
+header.top h1 small{color:var(--muted);font-weight:400;margin-left:6px}
+nav.toc{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:.85rem;padding:4px 10px;border-radius:99px;border:1px solid var(--border)}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent)}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 80px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:0 0 22px;scroll-margin-top:110px}
+section.card h2{margin:0 0 4px;font-size:1.25rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:99px;margin-bottom:6px}
+.lead{color:var(--muted);margin:0 0 14px}
+.terms{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.terms span{font-size:.8rem;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:7px 14px;border-radius:9px;transition:transform .12s,border-color .15s}
+button:hover{border-color:var(--accent)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+button.danger{border-color:var(--bad);color:var(--bad)}
+button.sm{padding:3px 10px;font-size:.85rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.box{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)}
+.box h3{margin:0 0 6px;font-size:.95rem}
+.good{border-color:var(--ok);background:var(--ok-soft)}
+.badbox{border-color:var(--bad);background:var(--bad-soft)}
+pre,code,textarea.code{font-family:"Cascadia Code","D2Coding",Consolas,monospace}
+pre.code{background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:10px;overflow:auto;margin:0;font-size:.84rem;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+input[type=text],input[type=number],input[type=datetime-local],select,textarea.plain{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
+textarea.plain{resize:vertical}
+.hint{font-size:.86rem;color:var(--muted)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.92rem;margin-top:12px}
+.bar{height:12px;border-radius:99px;background:var(--border);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:.78rem;font-weight:700}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;border-radius:0;border-right:1px solid var(--border)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--accent);color:var(--accent-text);font-weight:600}
+label.f{display:block;margin:6px 0;font-size:.92rem}
+label.f>b{display:block;font-size:.82rem;color:var(--muted);font-weight:600}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left}
+.tbl td.num,.tbl th.num{text-align:right;font-variant-numeric:tabular-nums}
+.chat{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg);min-height:100px}
+.tcall{font-family:Consolas,monospace;font-size:.82rem;border-left:3px solid var(--accent);padding:3px 8px;margin:4px 0;background:var(--surface)}
+.logline{font-family:Consolas,monospace;font-size:.8rem;padding:3px 0;border-bottom:1px dashed var(--border)}
+.stepcard{display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin:6px 0;background:var(--bg)}
+.stepcard .n{flex:1}
+.lv{font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:99px;border:0;cursor:pointer}
+.lv.auto{background:var(--ok-soft);color:var(--ok)}.lv.draft{background:var(--warn-soft);color:var(--warn)}.lv.human{background:var(--bad-soft);color:var(--bad)}
+.mark{background:var(--bad-soft);color:var(--bad);border-radius:4px;padding:0 3px;font-weight:700}
+.mark.ok{background:var(--ok-soft);color:var(--ok)}
+.pipe{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.pipe .st{flex:1 1 130px;border:2px solid var(--border);border-radius:10px;padding:8px;text-align:center;font-size:.85rem;background:var(--bg);transition:.25s}
+.pipe .st.run{border-color:var(--accent);background:var(--accent-soft)}
+.pipe .st.done{border-color:var(--ok);background:var(--ok-soft)}
+.pipe .st.wait{border-color:var(--warn);background:var(--warn-soft)}
+.flip{perspective:700px;height:116px;cursor:pointer}
+.flip>div{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on>div{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:.88rem}
+.flip .front{background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:1.02rem}
+.flip .back{background:var(--surface);transform:rotateY(180deg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.opt{display:block;width:100%;text-align:left;margin:5px 0}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.country{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg)}
+.country h3{margin:0 0 4px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+html{scroll-behavior:auto}
+body.lab{background:var(--surface)}
+body.lab main{max-width:none;margin:0;padding:0}
+body.lab section.card{border:0;border-radius:0;background:transparent;padding:4px 2px 12px;margin:0}
+body.lab section.card>.tag,body.lab section.card>h2,body.lab section.card>.terms{display:none}
+</style>
+</head>
+<body class="lab">
+<main>
+<section class="card" id="s2">
+  <span class="tag">설계</span><h2>2. 업무 분해: 자동 · 초안+승인 · 사람</h2>
+  <p class="lead">각 단계의 배지를 눌러 <b>자동화 수준</b>을 바꿔 보세요. 잘못되면 피해가 큰 단계를 자동으로 두면 경고가 뜹니다.</p>
+  <div class="terms"><span>HITL(Human-in-the-Loop)</span><span>가드레일</span><span>드라이런</span></div>
+  <div id="dcList"></div>
+  <div id="dcRes" class="note"></div>
+</section>
+</main>
+
+<script>
+
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const money = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+
+
+
+
+
+(function(){
+  var LAB_ID = "103s-02";
+  function setTheme(v){
+    document.documentElement.setAttribute('data-theme', v);
+    try{ window.dispatchEvent(new Event('themechange')); }catch(e){}
+    try{ if (typeof redraws !== 'undefined') redraws.forEach(function(f){ f(); }); }catch(e){}
+  }
+  // 실습 안의 toast() 는 iframe 아래쪽에 갇히지 않도록 앱 셸 화면에 띄운다
+  try{ if (typeof toast === 'function') { toast = function(msg){ parent.postMessage({ type: 'toast', id: LAB_ID, message: String(msg) }, '*'); }; } }catch(e){}
+  var m = /theme=(light|dark)/.exec(location.hash); if(m) document.documentElement.setAttribute('data-theme', m[1]);
+  window.addEventListener('message', function(e){ if(e.data && e.data.type === 'theme') setTheme(e.data.value); });
+  function report(){ try{ parent.postMessage({ type: 'lab-height', id: LAB_ID, height: Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
+  // 충분히 조작해 봤다는 신호(클릭·입력 6회) → 앱 셸이 실습 완료로 자동 기록
+  var engaged = 0, sent = false;
+  ['click','input','change'].forEach(function(t){ document.addEventListener(t, function(){
+    engaged++; if(!sent && engaged >= 6){ sent = true; try{ parent.postMessage({ type: 'lab-engaged', id: LAB_ID }, '*'); }catch(e){} }
+  }, true); });
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener('load', report);
+  window.addEventListener('error', function(ev){ try{ parent.postMessage({ type: 'lab-error', id: LAB_ID, message: String(ev.message) }, '*'); }catch(e){} });
+})();
+
+(function(){
+  const steps = [
+    ['RFQ 메일 수신·분류', 'auto', false],
+    ['정보 추출 (구조화)', 'auto', false],
+    ['견적 계산 (코드)', 'auto', false],
+    ['가격·납기 예외 판단', 'human', true],
+    ['현지어 회신 초안 작성', 'draft', false],
+    ['고객에게 메일 발송', 'human', true],
+    ['CRM 딜 정보 업데이트', 'draft', true]
+  ];
+  const state = steps.map(s => s[1]);
+  const L = {auto:'자동', draft:'초안+승인', human:'사람'}, order = ['auto','draft','human'];
+  function render(){
+    $('#dcList').innerHTML = steps.map((s,i) => '<div class="stepcard"><span>'+(i+1)+'.</span><span class="n">'+s[0]+(s[2]?' <span class="pill bad">고위험</span>':'')+'</span><button class="lv '+state[i]+'" data-i="'+i+'">'+L[state[i]]+'</button></div>').join('');
+    $$('#dcList .lv').forEach(b => b.onclick = () => { const i = +b.dataset.i; state[i] = order[(order.indexOf(state[i]) + 1) % 3]; render(); });
+    const bad = steps.filter((s,i) => s[2] && state[i] === 'auto');
+    const wasteful = steps.filter((s,i) => !s[2] && state[i] === 'human');
+    let h = '';
+    if(bad.length) h += '<span class="pill bad">위험</span> 고위험 단계가 “자동”입니다: <b>' + bad.map(b => b[0]).join(', ') + '</b>. 외부 발송·CRM 쓰기는 승인을 유지하세요.<br>';
+    if(wasteful.length) h += '<span class="pill warn">비효율</span> 저위험 단계를 사람이 하고 있어요: ' + wasteful.map(b => b[0]).join(', ') + '. 자동화 후보입니다.<br>';
+    if(!h) h = '<span class="pill ok">균형 좋음</span> 위험한 단계는 사람 확인, 반복 단계는 자동화. 먼저 드라이런으로 시작하세요.';
+    $('#dcRes').innerHTML = h;
+  }
+  render();
+})();
+
+
+</script>
+</body>
+</html>

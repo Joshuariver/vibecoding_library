@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>최소 권한 · 드라이런 · 멱등성</title>
+<style>
+@font-face{font-family:"Pretendard";src:url("../fonts/PretendardVariable.woff2") format("woff2-variations"),url("../fonts/PretendardVariable.woff2") format("woff2");font-weight:45 920;font-style:normal;font-display:swap}
+:root{
+  --bg:#f6f7fa; --surface:#fff; --text:#1c2130; --muted:#5d6479; --border:#dde1ec;
+  --accent:#b4531a; --accent-text:#fff; --accent-soft:#fbeadd;
+  --ok:#0d7c55; --ok-soft:#e1f6ed; --bad:#c62f3d; --bad-soft:#fde8ea; --warn:#8f5f00; --warn-soft:#fff1cc;
+  --code-bg:#161a28; --code-text:#e8ebf6; --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10131c; --surface:#191e2c; --text:#e9ecf6; --muted:#9ba3bd; --border:#2b3249;
+    --accent:#f0a06b; --accent-text:#2a1204; --accent-soft:#3a2517;
+    --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016; --code-bg:#0b0e18;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10131c; --surface:#191e2c; --text:#e9ecf6; --muted:#9ba3bd; --border:#2b3249;
+  --accent:#f0a06b; --accent-text:#2a1204; --accent-soft:#3a2517;
+  --ok:#4fd1a1; --ok-soft:#15332a; --bad:#ff7a86; --bad-soft:#3a1c22; --warn:#f2c14e; --warn-soft:#3a3016; --code-bg:#0b0e18;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 "Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header.top h1{font-size:1.05rem;margin:0;flex:1 1 auto}
+header.top h1 small{color:var(--muted);font-weight:400;margin-left:6px}
+nav.toc{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:.85rem;padding:4px 10px;border-radius:99px;border:1px solid var(--border)}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent)}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 80px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:0 0 22px;scroll-margin-top:110px}
+section.card h2{margin:0 0 4px;font-size:1.25rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:99px;margin-bottom:6px}
+.lead{color:var(--muted);margin:0 0 14px}
+.terms{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.terms span{font-size:.8rem;background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:6px}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:7px 14px;border-radius:9px;transition:transform .12s,border-color .15s}
+button:hover{border-color:var(--accent)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+button.danger{border-color:var(--bad);color:var(--bad)}
+button.sm{padding:3px 10px;font-size:.85rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.box{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)}
+.box h3{margin:0 0 6px;font-size:.95rem}
+.good{border-color:var(--ok);background:var(--ok-soft)}
+.badbox{border-color:var(--bad);background:var(--bad-soft)}
+pre,code,textarea.code{font-family:"Cascadia Code","D2Coding",Consolas,monospace}
+pre.code{background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:10px;overflow:auto;margin:0;font-size:.84rem;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+input[type=text],input[type=number],input[type=datetime-local],select,textarea.plain{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
+textarea.plain{resize:vertical}
+.hint{font-size:.86rem;color:var(--muted)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.92rem;margin-top:12px}
+.bar{height:12px;border-radius:99px;background:var(--border);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:.78rem;font-weight:700}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;border-radius:0;border-right:1px solid var(--border)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--accent);color:var(--accent-text);font-weight:600}
+label.f{display:block;margin:6px 0;font-size:.92rem}
+label.f>b{display:block;font-size:.82rem;color:var(--muted);font-weight:600}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem}
+.tbl th,.tbl td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left}
+.tbl td.num,.tbl th.num{text-align:right;font-variant-numeric:tabular-nums}
+.chat{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg);min-height:100px}
+.tcall{font-family:Consolas,monospace;font-size:.82rem;border-left:3px solid var(--accent);padding:3px 8px;margin:4px 0;background:var(--surface)}
+.logline{font-family:Consolas,monospace;font-size:.8rem;padding:3px 0;border-bottom:1px dashed var(--border)}
+.stepcard{display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin:6px 0;background:var(--bg)}
+.stepcard .n{flex:1}
+.lv{font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:99px;border:0;cursor:pointer}
+.lv.auto{background:var(--ok-soft);color:var(--ok)}.lv.draft{background:var(--warn-soft);color:var(--warn)}.lv.human{background:var(--bad-soft);color:var(--bad)}
+.mark{background:var(--bad-soft);color:var(--bad);border-radius:4px;padding:0 3px;font-weight:700}
+.mark.ok{background:var(--ok-soft);color:var(--ok)}
+.pipe{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.pipe .st{flex:1 1 130px;border:2px solid var(--border);border-radius:10px;padding:8px;text-align:center;font-size:.85rem;background:var(--bg);transition:.25s}
+.pipe .st.run{border-color:var(--accent);background:var(--accent-soft)}
+.pipe .st.done{border-color:var(--ok);background:var(--ok-soft)}
+.pipe .st.wait{border-color:var(--warn);background:var(--warn-soft)}
+.flip{perspective:700px;height:116px;cursor:pointer}
+.flip>div{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on>div{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:.88rem}
+.flip .front{background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:1.02rem}
+.flip .back{background:var(--surface);transform:rotateY(180deg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.opt{display:block;width:100%;text-align:left;margin:5px 0}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.country{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg)}
+.country h3{margin:0 0 4px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+html{scroll-behavior:auto}
+body.lab{background:var(--surface)}
+body.lab main{max-width:none;margin:0;padding:0}
+body.lab section.card{border:0;border-radius:0;background:transparent;padding:4px 2px 12px;margin:0}
+body.lab section.card>.tag,body.lab section.card>h2,body.lab section.card>.terms{display:none}
+</style>
+</head>
+<body class="lab">
+<main>
+<section class="card" id="s7">
+  <span class="tag">MCP · 권한 · 승인</span><h2>7. 최소 권한 · 드라이런 · 멱등성</h2>
+  <p class="lead">먼저 연결 권한을 정하고, 아래 승인 대기열에서 Agent가 만든 작업을 처리해 보세요.</p>
+  <div class="terms"><span>최소 권한</span><span>드라이런</span><span>멱등성</span><span>감사 로그</span><span>승인 대기열</span></div>
+  <table class="tbl" id="pmTbl"></table>
+  <div id="pmRes" class="note"></div>
+  <hr style="border:0;border-top:1px solid var(--border);margin:16px 0">
+  <div class="row" style="margin-bottom:8px"><label><input type="checkbox" id="dryRun" checked> 드라이런 모드 (실제 실행 없이 변경안만)</label></div>
+  <div class="grid2">
+    <div id="apQ"></div>
+    <div><p class="hint" style="margin:0 0 4px">감사 로그</p><div class="box" id="apLog" style="min-height:120px;max-height:220px;overflow:auto"></div></div>
+  </div>
+</section>
+</main>
+
+<script>
+
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const money = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+
+
+
+
+
+(function(){
+  var LAB_ID = "103s-07";
+  function setTheme(v){
+    document.documentElement.setAttribute('data-theme', v);
+    try{ window.dispatchEvent(new Event('themechange')); }catch(e){}
+    try{ if (typeof redraws !== 'undefined') redraws.forEach(function(f){ f(); }); }catch(e){}
+  }
+  // 실습 안의 toast() 는 iframe 아래쪽에 갇히지 않도록 앱 셸 화면에 띄운다
+  try{ if (typeof toast === 'function') { toast = function(msg){ parent.postMessage({ type: 'toast', id: LAB_ID, message: String(msg) }, '*'); }; } }catch(e){}
+  var m = /theme=(light|dark)/.exec(location.hash); if(m) document.documentElement.setAttribute('data-theme', m[1]);
+  window.addEventListener('message', function(e){ if(e.data && e.data.type === 'theme') setTheme(e.data.value); });
+  function report(){ try{ parent.postMessage({ type: 'lab-height', id: LAB_ID, height: Math.ceil(document.body.getBoundingClientRect().height) }, '*'); }catch(e){} }
+  // 충분히 조작해 봤다는 신호(클릭·입력 6회) → 앱 셸이 실습 완료로 자동 기록
+  var engaged = 0, sent = false;
+  ['click','input','change'].forEach(function(t){ document.addEventListener(t, function(){
+    engaged++; if(!sent && engaged >= 6){ sent = true; try{ parent.postMessage({ type: 'lab-engaged', id: LAB_ID }, '*'); }catch(e){} }
+  }, true); });
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener('load', report);
+  window.addEventListener('error', function(ev){ try{ parent.postMessage({ type: 'lab-error', id: LAB_ID, message: String(ev.message) }, '*'); }catch(e){} });
+})();
+
+(function(){
+  const LV = ['끔','읽기','초안/제안','쓰기·발송'];
+  const SV = [
+    {n:'CRM', rec:1, risk:3, why:'대량 수정 위험 → 읽기로 시작, 필드 단위 쓰기는 승인 후'},
+    {n:'Gmail', rec:2, risk:3, why:'초안 생성까지만. 발송은 승인 필수'},
+    {n:'Google Drive', rec:1, risk:2, why:'지정 폴더만 읽기. 원가·계약 폴더는 제외'},
+    {n:'Calendar', rec:1, risk:1, why:'읽기. 일정 생성은 제안만'}
+  ];
+  const cur = SV.map(s => 0);
+  function render(){
+    $('#pmTbl').innerHTML = '<tr><th>서비스</th><th>권한 수준</th><th>권장</th></tr>' + SV.map((s,i) => '<tr><td><b>'+s.n+'</b></td><td><div class="seg">' + LV.map((l,k) => '<button class="sm '+(cur[i]===k?'on':'')+'" data-i="'+i+'" data-k="'+k+'">'+l+'</button>').join('') + '</div></td><td class="hint">'+LV[s.rec]+'</td></tr>').join('');
+    $$('#pmTbl button').forEach(b => b.onclick = () => { cur[+b.dataset.i] = +b.dataset.k; render(); });
+    const over = SV.filter((s,i) => cur[i] > s.rec);
+    $('#pmRes').innerHTML = over.length ? '<span class="pill bad">과도한 권한</span><br>' + over.map(s => '• <b>'+s.n+'</b>: '+s.why).join('<br>') : '<span class="pill ok">최소 권한</span> 필요한 만큼만 열려 있습니다. 필요해질 때 한 단계씩 올리세요.';
+  }
+  render();
+
+  const sent = new Set(), log = m => $('#apLog').insertAdjacentHTML('afterbegin','<div class="logline">'+m+'</div>');
+  const tasks = [
+    {id:'mail-A102', t:'✉ Maria에게 견적 회신 메일 발송', kind:'발송'},
+    {id:'crm-D557', t:'🗂 CRM: 딜 D-557 단계 → “제안” 변경', kind:'CRM 쓰기'},
+    {id:'cal-0912', t:'📅 바이어 미팅 일정 생성', kind:'일정 생성'}
+  ];
+  function q(){
+    $('#apQ').innerHTML = tasks.map(k => '<div class="box" style="margin-bottom:8px"><b>'+k.t+'</b><div class="hint">유형: '+k.kind+' · 키: <code>'+k.id+'</code></div><div class="row" style="margin-top:6px"><button class="sm primary" data-a="ok" data-id="'+k.id+'">승인·실행</button><button class="sm danger" data-a="no" data-id="'+k.id+'">반려</button></div></div>').join('');
+    $$('#apQ button').forEach(b => b.onclick = () => {
+      const id = b.dataset.id, k = tasks.find(x => x.id === id), t = new Date().toLocaleTimeString('ko-KR');
+      if(b.dataset.a === 'no'){ log(t + ' ❌ 반려: ' + k.t); return; }
+      if($('#dryRun').checked){ log(t + ' 📝 [드라이런] 실행 예정: ' + k.t + ' (실제 변경 없음)'); return; }
+      if(sent.has(id)){ log(t + ' 🛑 <b>중복 차단(멱등성)</b>: 키 ' + id + ' 는 이미 실행됨'); return; }
+      sent.add(id); log(t + ' ✅ 실행 완료: ' + k.t + ' (키 ' + id + ' 기록)');
+    });
+  }
+  q();
+  log('드라이런을 끄고 같은 항목을 두 번 승인해 보세요.');
+})();
+
+
+</script>
+</body>
+</html>
